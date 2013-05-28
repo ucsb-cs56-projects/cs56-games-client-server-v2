@@ -4,3 +4,13 @@
 *.jar
 *.war
 *.ear
+
+# Temp Files #
+*~
+
+# Silly Mac #
+.DS_Store
+
+# Eclipse Files #
+.project
+.classpath
