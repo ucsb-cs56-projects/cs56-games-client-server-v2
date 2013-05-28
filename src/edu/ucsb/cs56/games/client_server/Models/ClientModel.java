@@ -29,11 +29,10 @@ public class ClientModel{
         setLocation(0);
     }
     
-    public ClientModel(int id, String name, int location, boolean isOp) {
+    public ClientModel(int id, String name, int location) {
     	this.id = id;
     	this.name = name;
     	this.location = location;
-    	this.isOp = isOp;
     }
 
     public static void init() {

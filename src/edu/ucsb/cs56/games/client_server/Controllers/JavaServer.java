@@ -9,7 +9,7 @@ import edu.ucsb.cs56.games.server.Controllers.LobbyController;
 import edu.ucsb.cs56.games.server.Controllers.ServiceController;
 import edu.ucsb.cs56.games.server.Controllers.TicTacToeController;
 import edu.ucsb.cs56.games.server.Controllers.ClientNetworkController;
-import edu.ucsb.cs56.games.server.Views.ServerView;
+import edu.ucsb.cs56.games.server.Views.ServerViewPanel;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -52,7 +52,7 @@ public class JavaServer{
     public int portNum;
     public static boolean nogui;
     
-    private ServerView view = null;
+    private ServerViewPanel view = null;
     
     private ActionListener connectActionListener;
 
@@ -106,7 +106,7 @@ public class JavaServer{
         if(nogui)
             return;
         
-    	this.view = new ServerView(JavaServer.PORT);
+    	this.view = new ServerViewPanel(JavaServer.PORT);
     	connectActionListener = new ActionListener() {
             public void actionPerformed(ActionEvent actionEvent) {                  
             	if(connected) {

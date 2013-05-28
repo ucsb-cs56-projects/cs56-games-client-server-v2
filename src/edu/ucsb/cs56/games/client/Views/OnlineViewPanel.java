@@ -2,8 +2,6 @@ package edu.ucsb.cs56.games.client.Views;
 
 import javax.swing.*;
 
-import edu.ucsb.cs56.games.client_server.JavaClient;
-
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -18,14 +16,21 @@ import java.awt.event.MouseEvent;
  * @version for CS56, Choice Points, Winter 2012
  */
 
-public class LobbyViewPanel extends GameViewPanel {
-    public LobbyViewPanel() {
+public class OnlineViewPanel extends GameViewPanel {
+	
+	private JButton ticTacToeButton;
+	private JButton gomokuButton;
+	private JButton chessButton;
+	
+    public OnlineViewPanel() {
         setLayout(new FlowLayout());
-        JoinGameButton ticTacToeButton = new JoinGameButton("TicTacToe");
+        
+        ticTacToeButton = new JButton("TicTacToe");
+        gomokuButton = new JButton("Gomoku");
+        chessButton = new JButton("Chess");
+        
         add(BorderLayout.NORTH, ticTacToeButton);
-        JoinGameButton gomokuButton = new JoinGameButton("Gomoku");
         add(BorderLayout.NORTH, gomokuButton);
-        JoinGameButton chessButton = new JoinGameButton("Chess");
         add(BorderLayout.NORTH, chessButton);
     }
 
@@ -59,18 +64,5 @@ public class LobbyViewPanel extends GameViewPanel {
     @Override
     public void mouseExited(MouseEvent mouseEvent){
         //To change body of implemented methods use File | Settings | File Templates.
-    }
-
-    class JoinGameButton extends JButton implements ActionListener{
-        String name;
-        public JoinGameButton(String text) {
-            super(text);
-            name = text;
-            this.addActionListener(this);
-        }
-        @Override
-        public void actionPerformed(ActionEvent actionEvent){
-            JavaClient.javaClient.sendMessage("MSG;/join " + name);
-        }
     }
 }

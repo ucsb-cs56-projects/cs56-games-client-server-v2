@@ -2,11 +2,7 @@ package edu.ucsb.cs56.games.client.Views;
 
 import javax.swing.*;
 
-import edu.ucsb.cs56.games.client_server.JavaClient;
-
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 
 /**
@@ -39,7 +35,7 @@ public class OfflineViewPanel extends GameViewPanel {
         port_box.setAlignmentY(JTextField.CENTER_ALIGNMENT);
         port_box.setText(PORT+"");
         
-        connectButton = new ConnectButton();
+        connectButton = new JButton("Connect");
         connectButton.setAlignmentY(JButton.CENTER_ALIGNMENT);
         
         connect_panel = new JPanel();
@@ -67,14 +63,35 @@ public class OfflineViewPanel extends GameViewPanel {
     @Override
     public void mouseExited(MouseEvent mouseEvent){}
 
-    public class ConnectButton extends JButton implements ActionListener{
-        public ConnectButton() {
-            super("Connect");
-            addActionListener(this);
-        }
+	public JTextField getIp_box() {
+		return ip_box;
+	}
 
-        public void actionPerformed(ActionEvent ev) {
-            JavaClient.javaClient.connect(ip_box.getText(),Integer.parseInt(port_box.getText()));
-        }
-    }
+	public void setIp_box(JTextField ip_box) {
+		this.ip_box = ip_box;
+	}
+
+	public JTextField getPort_box() {
+		return port_box;
+	}
+
+	public void setPort_box(JTextField port_box) {
+		this.port_box = port_box;
+	}
+
+	public JButton getConnectButton() {
+		return connectButton;
+	}
+
+	public void setConnectButton(JButton connectButton) {
+		this.connectButton = connectButton;
+	}
+
+	public JPanel getConnect_panel() {
+		return connect_panel;
+	}
+
+	public void setConnect_panel(JPanel connect_panel) {
+		this.connect_panel = connect_panel;
+	}
 }

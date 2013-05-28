@@ -11,7 +11,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-public class ServerView {
+public class ServerViewPanel {
 	
 	private JFrame mainFrame;
 	private JPanel main;
@@ -20,7 +20,7 @@ public class ServerView {
 	private JButton connectButton;
 	private JLabel status;
 	
-	public ServerView(int port) {
+	public ServerViewPanel(int port) {
 		mainFrame = new JFrame();
 		
 		// Add sections we need

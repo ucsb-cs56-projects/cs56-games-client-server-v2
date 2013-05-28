@@ -1,17 +1,35 @@
 package edu.ucsb.cs56.games.client_server.Controllers;
 
-import java.io.*;
-import java.net.*;
-import java.awt.*;
-import java.awt.event.*;
+import java.awt.Component;
+import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.net.Socket;
+import java.net.SocketException;
 import java.util.ArrayList;
-import javax.swing.*;
 
-import edu.ucsb.cs56.games.client_server.Controllers.Controller;
-import edu.ucsb.cs56.games.client_server.Models.MessageModel;
-import edu.ucsb.cs56.games.client_server.Models.ClientModel;
-import edu.ucsb.cs56.games.client_server.Models.ResModel;
+import javax.swing.DefaultListCellRenderer;
+import javax.swing.DefaultListModel;
+import javax.swing.JButton;
+import javax.swing.JList;
+import javax.swing.SwingUtilities;
+
+import edu.ucsb.cs56.games.client.Models.MessageModel;
 import edu.ucsb.cs56.games.client.Models.UsernameModel;
+import edu.ucsb.cs56.games.client.Views.ClientViewPanel;
+import edu.ucsb.cs56.games.client.Views.OfflineViewPanel;
+import edu.ucsb.cs56.games.client_server.Models.ClientModel;
+import edu.ucsb.cs56.games.server.Controllers.ServiceController;
+//import edu.ucsb.cs56.games.client_server.Models.ResModel;
 
 /**
  * JavaClient is the main runnable client-side application, it allows users to connect to a server on a specific port
@@ -24,8 +42,9 @@ import edu.ucsb.cs56.games.client.Models.UsernameModel;
  */
 
 //start a java message client that tries to connect to a server at localhost:X
-public class JavaClient implements KeyListener {
+public class JavaClient {
     public static JavaClient javaClient;
+    private ClientViewPanel view = null;
 
     Socket sock;
     InputStreamReader stream;
@@ -36,23 +55,10 @@ public class JavaClient implements KeyListener {
     ArrayList<Integer> services;
     
     ArrayList<MessageModel> messages;
-
-    JFrame frame;
-    Container container;
-    GameViewPanel canvas;//the actual canvas currently being used by the gui
-    GameViewPanel canvasRef;//a reference to the current canvas being used by the game logic
-    JTextField inputBox;
-    JButton sendButton;
-    JEditorPane outputBox;
-
-    JList userList;
-    DefaultListModel listModel;
-
+    
     private int id;
     String name;
     int location;
-
-    boolean[] Keys;
     
     InputReader thread;
     RefreshThread refreshThread;
@@ -63,11 +69,12 @@ public class JavaClient implements KeyListener {
     }
 
     public JavaClient() {
-        ResModel.init(this.getClass());
-        frame = new JFrame("Java Games Online");
-        frame.setSize(640, 512);
-        frame.setMinimumSize(new Dimension(480,512));
-        frame.addWindowListener(new WindowAdapter() {
+    	// XXX Later for chess
+        //ResModel.init(this.getClass());
+        this.view = new ClientViewPanel();
+        
+        // Add listeners
+        view.getFrame().addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent winEvt) {
                 if(thread != null)
                     thread.running = false;
@@ -77,122 +84,64 @@ public class JavaClient implements KeyListener {
                 System.exit(0);
             }
         });
-
         
-        container = frame.getContentPane();
-        canvas = new OfflineViewPanel(JavaServer.IP_ADDR,JavaServer.PORT);
-        canvasRef = canvas;
-        container.add(BorderLayout.CENTER,canvas);
-
-        JPanel southPanel = new JPanel(new BorderLayout());
-        container.add(BorderLayout.SOUTH, southPanel);
-
         SendListener listener = new SendListener();
-        inputBox = new JTextField();
-        inputBox.addActionListener(listener);
-        sendButton = new JButton("Send");
-        sendButton.addActionListener(listener);
-        southPanel.setFocusable(true);
-        canvas.setFocusable(true);
-
-        canvas.addKeyListener(this);
-        canvas.addMouseListener(canvas);
-        inputBox.addKeyListener(this);
-
-        southPanel.add(BorderLayout.EAST, sendButton);
-        southPanel.add(BorderLayout.CENTER, inputBox);
-
-        listModel = new DefaultListModel();
-
-
-        userList = new JList(listModel);
+        view.getSouthPanel().getInputBox().addActionListener(listener);
+        view.getSouthPanel().getSendButton().addActionListener(listener);
+        
         MouseListener mouseListener = new MouseAdapter() {
             public void mouseClicked(MouseEvent e) {
                 if (e.getClickCount() == 2) {
-                    int index = userList.locationToIndex(e.getPoint());
+                    int index = view.getUserList().locationToIndex(e.getPoint());
                     //follow player into game
-                    UsernameModel user = (UsernameModel)(listModel.getElementAt(index));
+                    UsernameModel user = (UsernameModel)(view.getListModel().getElementAt(index));
                     if(user != null)
                         sendMessage("MSG;/follow "+user.getName());
                 }
             }
         };
-        userList.addMouseListener(mouseListener);
-        userList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        userList.setLayoutOrientation(JList.VERTICAL);
-        userList.setVisibleRowCount(-1);
-        userList.setCellRenderer(new MyCellRenderer());
-
-        JScrollPane userScroll = new JScrollPane(userList);
-        userScroll.setAlignmentX(JScrollPane.LEFT_ALIGNMENT);
-        JPanel userPanel = new JPanel();
-        userPanel.setLayout(new BorderLayout());
-        container.add(BorderLayout.WEST, userPanel);
-        userPanel.add(BorderLayout.CENTER,userScroll);
-        FollowButton followButton = new FollowButton();
-        MessageButton messageButton = new MessageButton();
+        view.getUserList().addMouseListener(mouseListener);
         
-        JPanel menuPanel = new JPanel();
-        menuPanel.setLayout(new BoxLayout(menuPanel,BoxLayout.X_AXIS));
-        menuPanel.add(followButton);
-        menuPanel.add(Box.createHorizontalGlue());
-        menuPanel.add(messageButton);
-        userPanel.add(BorderLayout.SOUTH,menuPanel);
-        userScroll.setPreferredSize(new Dimension(160,100));
+        // Allow users to follow friends into game
+        ActionListener followActionListener = new ActionListener() {
+            public void actionPerformed(ActionEvent actionEvent) {                  
+            	UsernameModel user = (UsernameModel)view.getUserList().getSelectedValue();
+                if (user != null)
+                   sendMessage("MSG;/follow "+user.getName());
+            }
+    	};                
+    	view.getFollowButton().addActionListener(followActionListener);
+    	
+    	// Fills the input box with a command to send user a message
+        ActionListener messageActionListener = new ActionListener() {
+            public void actionPerformed(ActionEvent actionEvent) {                  
+            	UsernameModel user = (UsernameModel)view.getUserList().getSelectedValue();
+                if(user == null)
+                    return;
 
-        outputBox = new JEditorPane("text/html", "");
-        JScrollPane outputScroll = new JScrollPane(outputBox);
-        outputBox.setEditable(false);
-        southPanel.add(BorderLayout.NORTH, outputScroll);
-        outputScroll.setPreferredSize(new Dimension(100, 100));
-
-        frame.setVisible(true);
-
-        Keys = new boolean[255];
-        for(int i=0;i<255;i++)
-            Keys[i] = false;
+                view.getSouthPanel().getInputBox().setText("/msg " + user.getName() + " ");
+                view.getSouthPanel().getInputBox().requestFocus();
+            }
+    	};                
+    	view.getMessageButton().addActionListener(messageActionListener);
+    	
+    	// Default offline mode
+    	ActionListener connectActionListener = new ActionListener() {
+            public void actionPerformed(ActionEvent actionEvent) {
+            	OfflineViewPanel offlinePanel = (OfflineViewPanel) view.getCanvas();
+            	JavaClient.javaClient.connect(offlinePanel.getIp_box().getText(),Integer.parseInt(offlinePanel.getPort_box().getText()));
+            }
+    	};
+    	OfflineViewPanel offlinePanel = (OfflineViewPanel) view.getCanvas();
+    	offlinePanel.getConnectButton().addActionListener(connectActionListener);
+    	
+    	// Add cell renderer
+    	view.getUserList().setCellRenderer(new MyCellRenderer());
+    	
 
         //TODO: use the standardized list!!
 
         location = -1;
-    }
-
-    /** followbutton allows users to follow their friends into the game they're playing
-     * this can also be achieved by double-clicking on a name in the user list
-     */
-    class FollowButton extends JButton implements  ActionListener {
-        public FollowButton() {
-            super("Follow");
-            addActionListener(this);
-        }
-
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            UsernameModel user = (UsernameModel)userList.getSelectedValue();
-            if(user != null)
-               sendMessage("MSG;/follow "+user.getName());
-        }
-    }
-
-    /** messagebutton fills the input box with a command to send the specified user a message
-     *
-     */
-    class MessageButton extends JButton implements  ActionListener {
-        public MessageButton() {
-            super("Message");
-            addActionListener(this);
-        }
-
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            UsernameModel user = (UsernameModel)userList.getSelectedValue();
-            if(user == null)
-                return;
-
-            inputBox.setText("/msg " + user.getName() + " ");
-            //give inputbox focus
-            inputBox.requestFocus();
-        }
     }
 
 
@@ -210,6 +159,7 @@ public class JavaClient implements KeyListener {
             new Runnable() {
                 public void run() {
                     synchronized (getClients()) {
+                    	DefaultListModel listModel = view.getListModel();
                         listModel.clear();
                         if(location < 0)
                             return;
@@ -244,10 +194,10 @@ public class JavaClient implements KeyListener {
                     for(int i=0;i<messages.size();i++) {
                         content += messages.get(i).toString() + "<br>";
                     }
-                    outputBox.setText(content);
-                    int caret = outputBox.getDocument().getLength()-1;
+                    view.getOutputBox().setText(content);
+                    int caret = view.getOutputBox().getDocument().getLength()-1;
                     if(caret > 0)
-                        outputBox.setCaretPosition(caret);
+                    	view.getOutputBox().setCaretPosition(caret);
                 }
             }
         );
@@ -418,7 +368,8 @@ public class JavaClient implements KeyListener {
             updateClients();
             updateMessages();
         }
-        canvasRef.handleMessage(string);
+        // XXX fix?
+        view.getCanvasRef().handleMessage(string);
     }
 
     /** changes the location of the client, in order to generate a service panel associated with
@@ -426,16 +377,36 @@ public class JavaClient implements KeyListener {
      * @param L the service id number
      */
     public void changeLocation(int L) {
-        if(location == L)
+    	// XXX later
+        /*if(location == L)
             return;
         location = L;
         if(location == -1) {
             canvasRef = new OfflineViewPanel(JavaServer.IP_ADDR,JavaServer.PORT);
         } else {
-
             int serviceType = services.get(location);
-            if(serviceType == 0)
-                canvasRef = new LobbyViewPanel();
+            if(serviceType == 0) {
+            ActionListener joinActionListener = new ActionListener() {
+            	public void actionPerformed(ActionEvent actionEvent) { 
+            	    // XXX fix me
+            		sendMessage("MSG;/join " + name);
+            	}
+        	};
+        	this.view.getCanvasRef().get
+			            class JoinGameButton extends JButton implements ActionListener{
+			        String name;
+			        public JoinGameButton(String text) {
+			            super(text);
+			            name = text;
+			            this.addActionListener(this);
+			        }
+			        @Override
+			        public void actionPerformed(ActionEvent actionEvent){
+			            JavaClient.javaClient.sendMessage("MSG;/join " + name);
+			        }
+			    }
+                canvasRef = new OnlineViewPanel();
+            }
             else if(serviceType == 1)
                 canvasRef = new TicTacToeViewPanel();
             else if(serviceType == 2)
@@ -457,7 +428,7 @@ public class JavaClient implements KeyListener {
                     container.validate();
                 }
             }
-        );
+        );*/
     }
 
     /** sends a message to the server, which might be a request for information, game data,
@@ -467,19 +438,6 @@ public class JavaClient implements KeyListener {
     public void sendMessage(String string) {
         writer.println(string);
         writer.flush();
-    }
-
-    @Override
-    public void keyTyped(KeyEvent keyEvent){ }
-
-    @Override
-    public void keyPressed(KeyEvent keyEvent){
-        Keys[keyEvent.getKeyCode()] = true;
-    }
-
-    @Override
-    public void keyReleased(KeyEvent keyEvent){
-        Keys[keyEvent.getKeyCode()] = false;
     }
 
     public ArrayList<ClientModel> getClients() {
@@ -515,11 +473,11 @@ public class JavaClient implements KeyListener {
         }
 
         public void actionPerformed(ActionEvent event) {
-            String message = inputBox.getText();
+            String message = view.getSouthPanel().getInputBox().getText();
             if(message.length() == 0)
                 return;
 
-            inputBox.setText("");
+            view.getSouthPanel().getInputBox().setText("");
             if(isConnected()) {
                 sendMessage("MSG;"+message);
             }
@@ -555,13 +513,17 @@ public class JavaClient implements KeyListener {
                 e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
             }
             setConnected(false);
-            outputBox.setText("");
+            view.getOutputBox().setText("");
             updateClients();
             changeLocation(-1);
             System.out.println("quitting, cause thread ended");
             //System.exit(0);
         }
     }
+
+	public ClientViewPanel getView() {
+		return this.view;
+	}
 
 }
 
@@ -575,9 +537,9 @@ class MyCellRenderer extends DefaultListCellRenderer {
         Component c = super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
 
         UsernameModel user = (UsernameModel)value;
-        if (user.style == 2) {// <= put your logic here
+        if (user.getStyle() == 2) {// <= put your logic here
             c.setFont(c.getFont().deriveFont(Font.BOLD));
-        } else if(user.style == 1) {
+        } else if(user.getStyle() == 1) {
             c.setFont(c.getFont().deriveFont(Font.ITALIC));
         } else {
             c.setFont(c.getFont().deriveFont(Font.PLAIN));
@@ -604,7 +566,7 @@ class RefreshThread extends Thread implements Runnable {
             SwingUtilities.invokeLater(
                     new Runnable() {
                         public void run() {
-                            javaClient.canvas.repaint();
+                            javaClient.getView().getCanvas().repaint();
                         }
                     }
             );
