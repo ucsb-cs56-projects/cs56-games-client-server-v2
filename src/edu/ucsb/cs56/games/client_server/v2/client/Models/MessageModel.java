@@ -5,7 +5,8 @@ package edu.ucsb.cs56.games.client_server.v2.client.Models;
  * keeps track of user, makes it easy to determine if the text should be bold or italicised, stores more data than a string could
  *
  * @author Joseph Colicchio
- * @version for CS56, Choice Points, Winter 2012
+ * @author Adam Ehrlich
+ * @version for CS56, Spring 2013
  */
 
 public class MessageModel{

@@ -13,7 +13,8 @@ import java.awt.event.MouseEvent;
  * a few settings and specify if they want any server, or specifically an empty one to start a new game
  *
  * @author Joseph Colicchio
- * @version for CS56, Choice Points, Winter 2012
+ * @author Adam Ehrlich
+ * @version for CS56, Spring 2013
  */
 
 public class OnlineViewPanel extends GameViewPanel {

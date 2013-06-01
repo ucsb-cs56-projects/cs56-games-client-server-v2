@@ -11,12 +11,12 @@ import java.util.ArrayList;
 import edu.ucsb.cs56.games.client_server.v2.Controllers.JavaServer;
 
 /**
-* Chat service is a service that most services will extend, it provides functionality for handling messages and chat-related data
-*
-* @author Joseph Colicchio
-* @version for CS56, Choice Points, Winter 2012
-*/
-
+ * Chat service is a service that most services will extend, it provides functionality for handling messages and chat-related data
+ *
+ * @author Joseph Colicchio
+ * @author Adam Ehrlich
+ * @version for CS56, Spring 2013
+ */
 public class ChatController extends ServiceController {
 	
 	private JavaServer server;

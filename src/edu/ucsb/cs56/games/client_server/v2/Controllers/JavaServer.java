@@ -26,7 +26,8 @@ import edu.ucsb.cs56.games.client_server.v2.server.Views.ServerViewPanel;
  * or an available, open game service
  *
  * @author Joseph Colicchio
- * @version for CS56, Choice Points, Winter 2012
+ * @author Adam Ehrlich
+ * @version for CS56, Spring 2013
  */
 
 //start a java message server that listens for connections to port X and then connects the client 

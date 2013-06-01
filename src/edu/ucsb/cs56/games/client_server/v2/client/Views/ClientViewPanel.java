@@ -19,6 +19,13 @@ import javax.swing.ListSelectionModel;
 
 import edu.ucsb.cs56.games.client_server.v2.Controllers.JavaServer;
 
+/**
+ * Main Client Panel
+ * 
+ * @author Joseph Colicchio
+ * @author Adam Ehrlich
+ * @version for CS56, Spring 2013
+ */
 public class ClientViewPanel implements KeyListener {
 
 	private JFrame frame;

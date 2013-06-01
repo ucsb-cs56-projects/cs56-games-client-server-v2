@@ -23,6 +23,8 @@ import javax.swing.JList;
 import javax.swing.SwingUtilities;
 
 import edu.ucsb.cs56.games.client_server.v2.Models.ClientModel;
+import edu.ucsb.cs56.games.client_server.v2.client.Controllers.TicTacToeController;
+import edu.ucsb.cs56.games.client_server.v2.client.Controllers.TwoPlayerGameController;
 import edu.ucsb.cs56.games.client_server.v2.client.Models.MessageModel;
 import edu.ucsb.cs56.games.client_server.v2.client.Models.UsernameModel;
 import edu.ucsb.cs56.games.client_server.v2.client.Views.ClientViewPanel;
@@ -37,34 +39,36 @@ import edu.ucsb.cs56.games.client_server.v2.server.Controllers.ServiceController
  * the lobby or current game
  *
  * @author Joseph Colicchio
- * @version for CS56, Choice Points, Winter 2012
+ * @author Adam Ehrlich
+ * @version for CS56, Spring 2013
  */
 
 //start a java message client that tries to connect to a server at localhost:X
 public class JavaClient {
-    public static JavaClient javaClient;
     private ClientViewPanel view = null;
 
-    Socket sock;
-    InputStreamReader stream;
-    BufferedReader reader;
-    PrintWriter writer;
+    private Socket sock;
+    private InputStreamReader stream;
+    private BufferedReader reader;
+    private PrintWriter writer;
 
     private ArrayList<ClientModel> clients;
-    ArrayList<Integer> services;
+    private ArrayList<Integer> services;
     
-    ArrayList<MessageModel> messages;
+    private ArrayList<MessageModel> messages;
     
     private int id;
-    String name;
-    int location;
+    private String name;
+    private int location;
     
-    InputReader thread;
-    RefreshThread refreshThread;
+    private InputReader thread;
+    private RefreshThread refreshThread;
     private boolean connected;
+    
+    private TwoPlayerGameController gameController = null;
 
     public static void main(String [] args) {
-        javaClient = new JavaClient();
+        JavaClient javaClient = new JavaClient();
     }
 
     public JavaClient() {
@@ -128,7 +132,7 @@ public class JavaClient {
     	ActionListener connectActionListener = new ActionListener() {
             public void actionPerformed(ActionEvent actionEvent) {
             	OfflineViewPanel offlinePanel = (OfflineViewPanel) view.getCanvas();
-            	JavaClient.javaClient.connect(offlinePanel.getIp_box().getText(),Integer.parseInt(offlinePanel.getPort_box().getText()));
+            	connect(offlinePanel.getIp_box().getText(),Integer.parseInt(offlinePanel.getPort_box().getText()));
             }
     	};
     	OfflineViewPanel offlinePanel = (OfflineViewPanel) view.getCanvas();
@@ -369,7 +373,8 @@ public class JavaClient {
             updateMessages();
         }
         // XXX fix?
-        view.getCanvasRef().handleMessage(string);
+        if (gameController != null)
+        	gameController.handleMessage(string);
     }
 
     /** changes the location of the client, in order to generate a service panel associated with
@@ -389,7 +394,8 @@ public class JavaClient {
 	            ActionListener joinActionListener = new ActionListener() {
 	            	public void actionPerformed(ActionEvent actionEvent) { 
 	            	    // XXX fix me
-	            		sendMessage("MSG;/join " + name);
+	            		String tst = actionEvent.getActionCommand();
+	            		sendMessage("MSG;/join " + tst);
 	            	}
 	        	};
 	        	tmp.getTicTacToeButton().addActionListener(joinActionListener);
@@ -397,9 +403,11 @@ public class JavaClient {
 	        	tmp.getChessButton().addActionListener(joinActionListener);
 	        	view.setCanvasRef(tmp);
             }
-            /*else if(serviceType == 1)
-                canvasRef = new TicTacToeViewPanel();
-            else if(serviceType == 2)
+            else if(serviceType == 1) {
+            	gameController = new TicTacToeController(this);
+                view.setCanvasRef(((TicTacToeController)gameController).getView());
+            }
+            /*else if(serviceType == 2)
                 canvasRef = new GomokuViewPanel();
             else if(serviceType == 3)
                 canvasRef = new ChessViewPanel();*/

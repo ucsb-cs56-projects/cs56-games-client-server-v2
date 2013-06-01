@@ -14,7 +14,8 @@ import edu.ucsb.cs56.games.client_server.v2.Models.ClientModel;
  * it provides all functionality for transmitting data to clients and receiving incoming data from them
  *
  * @author Joseph Colicchio
- * @version for CS56, Choice Points, Winter 2012
+ * @author Adam Ehrlich
+ * @version for CS56, Spring 2013
  */
 
 //server-wide convention for managing cilents connected to server

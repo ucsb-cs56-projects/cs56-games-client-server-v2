@@ -8,7 +8,8 @@ import edu.ucsb.cs56.games.client_server.v2.Controllers.JavaServer;
  * its existence is largely pointless
  *
  * @author Joseph Colicchio
- * @version for CS56, Choice Points, Winter 2012
+ * @author Adam Ehrlich
+ * @version for CS56, Spring 2013
  */
 
 public class LobbyController extends ChatController {

@@ -11,6 +11,13 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
+/**
+ * Server View Panel
+ * 
+ * @author Joseph Colicchio
+ * @author Adam Ehrlich
+ * @version for CS56, Spring 2013
+ */
 public class ServerViewPanel {
 	
 	private JFrame mainFrame;

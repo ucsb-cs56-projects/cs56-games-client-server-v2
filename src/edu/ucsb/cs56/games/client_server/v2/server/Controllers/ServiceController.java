@@ -10,7 +10,8 @@ import edu.ucsb.cs56.games.client_server.v2.Controllers.JavaServer;
  * passing data from the client to the game, as delegated by the clientconnect object on the server
  *
  * @author Joseph Colicchio
- * @version for CS56, Choice Points, Winter 2012
+ * @author Adam Ehrlich
+ * @version for CS56, Spring 2013
  */
 
 public abstract class ServiceController{

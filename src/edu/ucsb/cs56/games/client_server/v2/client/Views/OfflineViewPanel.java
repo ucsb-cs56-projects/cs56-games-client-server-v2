@@ -11,7 +11,8 @@ import java.awt.event.MouseEvent;
  * in the future, i'd like to have a thread do this, so the gui doesn't freeze with the connect button clicked
  *
  * @author Joseph Colicchio
- * @version for CS56, Choice Points, Winter 2012
+ * @author Adam Ehrlich
+ * @version for CS56, Spring 2013
  */
 
 //TODO: make new thread when connect is clicked, which is resolved as soon as the connection is made, but does not freeze the gui while waiting

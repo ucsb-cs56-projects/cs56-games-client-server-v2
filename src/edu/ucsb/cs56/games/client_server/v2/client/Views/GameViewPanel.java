@@ -11,7 +11,8 @@ import java.awt.event.MouseListener;
  * gamepanel was used when a client was disconnected
  *
  * @author Joseph Colicchio
- * @version for CS56, Choice Points, Winter 2012
+ * @author Adam Ehrlich
+ * @version for CS56, Spring 2013
  */
 
 public class GameViewPanel extends JPanel implements MouseListener{
@@ -23,14 +24,6 @@ public class GameViewPanel extends JPanel implements MouseListener{
      * update the game
      */
     public void update() {
-
-    }
-
-    /**
-     * handle incoming data from server
-     * @param string data
-     */
-    public void handleMessage(String string) {
 
     }
 

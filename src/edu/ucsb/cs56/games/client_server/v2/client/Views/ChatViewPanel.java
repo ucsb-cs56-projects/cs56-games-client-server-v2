@@ -6,6 +6,13 @@ import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
+/**
+ * Chat panel used in client
+ * 
+ * @author Joseph Colicchio
+ * @author Adam Ehrlich
+ * @version for CS56, Spring 2013
+ */
 public class ChatViewPanel extends JPanel {
 	
 	private JTextField inputBox;
