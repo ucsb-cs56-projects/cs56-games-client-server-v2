@@ -1,4 +1,4 @@
-package edu.ucsb.cs56.games.client.Views;
+package edu.ucsb.cs56.games.client_server.v2.client.Views;
 
 import java.awt.BorderLayout;
 import java.awt.Container;
@@ -17,7 +17,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.ListSelectionModel;
 
-import edu.ucsb.cs56.games.client_server.Controllers.JavaServer;
+import edu.ucsb.cs56.games.client_server.v2.Controllers.JavaServer;
 
 public class ClientViewPanel implements KeyListener {
 
@@ -47,7 +47,7 @@ public class ClientViewPanel implements KeyListener {
         container = frame.getContentPane();
         
         // Offline View
-        canvas = new OfflineViewPanel(JavaServer.IP_ADDR,JavaServer.PORT);
+        canvas = new OfflineViewPanel();
         canvasRef = canvas;
         container.add(BorderLayout.CENTER,canvas);
 
@@ -70,9 +70,9 @@ public class ClientViewPanel implements KeyListener {
 
         userScroll = new JScrollPane(userList);
         userScroll.setAlignmentX(JScrollPane.LEFT_ALIGNMENT);
+        userScroll.setPreferredSize(new Dimension(160,100));
         userPanel = new JPanel();
         userPanel.setLayout(new BorderLayout());
-        container.add(BorderLayout.WEST, userPanel);
         userPanel.add(BorderLayout.CENTER,userScroll);
         followButton = new JButton("Follow");
         messageButton = new JButton("Message");
@@ -82,8 +82,8 @@ public class ClientViewPanel implements KeyListener {
         menuPanel.add(followButton);
         menuPanel.add(Box.createHorizontalGlue());
         menuPanel.add(messageButton);
-        userPanel.add(BorderLayout.SOUTH,menuPanel);
-        userScroll.setPreferredSize(new Dimension(160,100));
+        userPanel.add(BorderLayout.SOUTH,menuPanel);  
+        container.add(BorderLayout.WEST, userPanel);
 
         outputBox = new JEditorPane("text/html", "");
         JScrollPane outputScroll = new JScrollPane(outputBox);
@@ -92,10 +92,18 @@ public class ClientViewPanel implements KeyListener {
         outputScroll.setPreferredSize(new Dimension(100, 100));
 
         frame.setVisible(true);
-
+        
         Keys = new boolean[255];
         for(int i=0;i<255;i++)
             Keys[i] = false;
+    }
+    
+    public void updateCavnasPanel() {
+    	container.remove(canvas);
+        canvas = canvasRef;
+        container.add(BorderLayout.CENTER, canvas);
+        canvas.addMouseListener(canvas);
+        container.validate();
     }
 	
 	@Override

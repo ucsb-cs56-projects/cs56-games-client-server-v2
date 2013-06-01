@@ -1,4 +1,4 @@
-package edu.ucsb.cs56.games.client.Views;
+package edu.ucsb.cs56.games.client_server.v2.client.Views;
 
 import javax.swing.*;
 
@@ -22,18 +22,16 @@ public class OfflineViewPanel extends GameViewPanel {
     private JButton connectButton;
     private JPanel connect_panel;
     
-    public OfflineViewPanel(String IP, int PORT) {
+    public OfflineViewPanel() {
         setLayout(new BoxLayout(this,BoxLayout.Y_AXIS));
         
         ip_box = new JTextField("127.0.0.1");
         ip_box.setPreferredSize(new Dimension(100,22));
         ip_box.setAlignmentY(JTextField.CENTER_ALIGNMENT);
-        ip_box.setText(IP);
         
         port_box = new JTextField("12345");
         port_box.setPreferredSize(new Dimension(45,22));
         port_box.setAlignmentY(JTextField.CENTER_ALIGNMENT);
-        port_box.setText(PORT+"");
         
         connectButton = new JButton("Connect");
         connectButton.setAlignmentY(JButton.CENTER_ALIGNMENT);

@@ -1,23 +1,22 @@
-package edu.ucsb.cs56.games.client_server.Controllers;
+package edu.ucsb.cs56.games.client_server.v2.Controllers;
 
-import javax.swing.*;
-import javax.swing.text.Utilities;
-
-import edu.ucsb.cs56.games.server.Controllers.ChessController;
-import edu.ucsb.cs56.games.server.Controllers.GomokuController;
-import edu.ucsb.cs56.games.server.Controllers.LobbyController;
-import edu.ucsb.cs56.games.server.Controllers.ServiceController;
-import edu.ucsb.cs56.games.server.Controllers.TicTacToeController;
-import edu.ucsb.cs56.games.server.Controllers.ClientNetworkController;
-import edu.ucsb.cs56.games.server.Views.ServerViewPanel;
-
-import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.*;
-import java.net.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.net.URL;
 import java.util.ArrayList;
-import java.util.Enumeration;
+
+//import edu.ucsb.cs56.games.server.Controllers.ChessController;
+//import edu.ucsb.cs56.games.server.Controllers.GomokuController;
+//import edu.ucsb.cs56.games.server.Controllers.TicTacToeController;
+import edu.ucsb.cs56.games.client_server.v2.server.Controllers.ClientNetworkController;
+import edu.ucsb.cs56.games.client_server.v2.server.Controllers.LobbyController;
+import edu.ucsb.cs56.games.client_server.v2.server.Controllers.ServiceController;
+import edu.ucsb.cs56.games.client_server.v2.server.Views.ServerViewPanel;
 
 /**
  * JavaServer is the main server-side application, can be run without gui by using a port number as a single argument
@@ -35,22 +34,21 @@ public class JavaServer{
     //this belongs to the server itself, independent of the chat standards
     public static ArrayList<ClientNetworkController> clients;
     public static ArrayList<ServiceController> services;
-    public static LobbyController lobby;
+    private LobbyController lobby;
 
-    public boolean running;
+    private  boolean running;
 
     //this could go in either, it's used mostly for the chat
-    public static ArrayList<String> bannedList;
+    private ArrayList<String> bannedList;
 
-    public static final String IP_ADDR = "127.0.0.1"; // localhost
-    public static final int PORT = 12345;
+    private static final String IP_ADDR = "127.0.0.1"; // localhost
+    private static final int PORT = 12345;
 
-    public static boolean connected;
-    public static JavaServer javaServer;
-    public MainThread mainThread;
-    public String runningOn;
-    public int portNum;
-    public static boolean nogui;
+    private boolean connected;
+    private MainThread mainThread;
+    private String runningOn;
+    private int portNum;
+    private boolean nogui;
     
     private ServerViewPanel view = null;
     
@@ -60,15 +58,15 @@ public class JavaServer{
         if(args.length > 0) {
             try {
                 int portNum = Integer.parseInt(args[0]);
-                nogui = true;
-                javaServer = new JavaServer();
+                JavaServer javaServer = new JavaServer(true);
                 javaServer.connect(portNum);
             } catch(Exception ex) {
                 System.out.println("bad port: "+args[0]);
                 System.exit(1);
             }
-        } else
-            javaServer = new JavaServer();
+        } else {
+            JavaServer JavaServer = new JavaServer(false);
+        }
     }
 
     /**
@@ -84,7 +82,7 @@ public class JavaServer{
         } catch(Exception ex) {
             ex.printStackTrace();
         }
-        mainThread = new MainThread(port);
+        mainThread = new MainThread(port, this);
         mainThread.start();
     }
 
@@ -102,7 +100,7 @@ public class JavaServer{
         }
     }
     
-    public JavaServer() {
+    public JavaServer(boolean nogui) {
         if(nogui)
             return;
         
@@ -111,10 +109,10 @@ public class JavaServer{
             public void actionPerformed(ActionEvent actionEvent) {                  
             	if(connected) {
                     view.getConnectButton().setText("Start Server");
-                    javaServer.stop();
+                    stop();
                 } else {
                 	view.getConnectButton().setText("Stop Server");
-                    javaServer.connect(Integer.parseInt(view.getPortBox().getText()));
+                    connect(Integer.parseInt(view.getPortBox().getText()));
                 }
             }
     	};                
@@ -127,8 +125,8 @@ public class JavaServer{
     public void updateServerGUI() {
         if(nogui)
             return;
-        if(javaServer.running)
-            view.getStatus().setText(javaServer.runningOn+", "+clients.size()+" user"+(clients.size()!=1?"s":""));
+        if(running)
+            view.getStatus().setText(runningOn+", "+clients.size()+" user"+(clients.size()!=1?"s":""));
         else
             view.getStatus().setText("Offline");
     }
@@ -137,7 +135,7 @@ public class JavaServer{
      * broadcast data to all clients on server
      * @param string data to send
      */
-    public static void broadcastMessage(String string) {
+    public void broadcastMessage(String string) {
         System.out.println("broadcasting... "+string);
         synchronized (clients) {
             for(int i=0;i<clients.size();i++)
@@ -151,7 +149,7 @@ public class JavaServer{
      * @param name name of client
      * @return id of client or -1 if not found
      */
-    public static int findClientByName(String name) {
+    public int findClientByName(String name) {
         synchronized (clients) {
             for(int i=0;i<clients.size();i++) {
                 if(clients.get(i) != null && clients.get(i).client.getName().equalsIgnoreCase(name))
@@ -162,7 +160,7 @@ public class JavaServer{
         return -1;
     }
     
-    public static String findUnusedName() {
+    public String findUnusedName() {
         String name = "";
         int id = 0;
         int foundAt;
@@ -182,7 +180,7 @@ public class JavaServer{
      * @param empty if service must be empty
      * @return the id of the server being searched for
      */
-    public static int findServiceByName(String name, boolean empty) {
+    public int findServiceByName(String name, boolean empty) {
         for(int i=0;i<services.size();i++) {
             if(services.get(i) != null && services.get(i).name.equalsIgnoreCase(name))
                 if(!empty || services.get(i).clients.size() <= 1)
@@ -202,13 +200,14 @@ public class JavaServer{
 
         ServiceController service = null;
         if(serviceType == 0)
-            service = new LobbyController(serviceID);
-        else if(serviceType == 1)
+            service = new LobbyController(serviceID, this);
+        // XXX fix later
+        /*else if(serviceType == 1)
             service = new TicTacToeController(serviceID);
         else if(serviceType == 2)
             service = new GomokuController(serviceID);
         else if(serviceType == 3)
-            service = new ChessController(serviceID);
+            service = new ChessController(serviceID);*/
 
         if(service == null)
             return -1;
@@ -227,7 +226,7 @@ public class JavaServer{
      *
      * @param IP ip to ban
      */
-    public static void banIP(String IP) {
+    public void banIP(String IP) {
         for(int i=0;i<bannedList.size();i++) {
             if(IP.equals(bannedList.get(i)))
                 return;
@@ -242,7 +241,7 @@ public class JavaServer{
      * unban an IP
      * @param IP ip to unban
      */
-    public static void unbanIP(String IP) {
+    public void unbanIP(String IP) {
         for(int i=0;i<bannedList.size();i++) {
             if(IP.equals(bannedList.get(i))) {
                 bannedList.remove(i);
@@ -258,7 +257,7 @@ public class JavaServer{
      * @param IP ip in question
      * @return if IP is banned
      */
-    public static boolean isBanned(String IP) {
+    public boolean isBanned(String IP) {
         String ADDR = IP.split(":")[0];
         for(int i=0;i<bannedList.size();i++) {
             if(ADDR.equals(bannedList.get(i)))
@@ -271,7 +270,9 @@ public class JavaServer{
      *
      */
     class MainThread extends Thread implements Runnable {
-        public MainThread(int P) {
+    	JavaServer server;
+        public MainThread(int P, JavaServer server) {
+        	this.server = server;
             portNum = P;
         }
         
@@ -281,7 +282,7 @@ public class JavaServer{
             bannedList = new ArrayList<String>();
 
             services = new ArrayList<ServiceController>();
-            lobby = new LobbyController(0);
+            lobby = new LobbyController(0, server);
             services.add(lobby);
 
             //clients.add(new edu.ucsb.cs56.W12.jcolicchio.issue535.EchoConnect(clients.size()));
@@ -306,7 +307,7 @@ public class JavaServer{
 
                     System.out.println("incoming connecting...");
                     //give them a client object, run it in a thread
-                    ClientNetworkController conn = new ClientNetworkController(sock);
+                    ClientNetworkController conn = new ClientNetworkController(sock, server);
                     Thread thread = new Thread(conn);
                     thread.start();
                     System.out.println("thread started");
@@ -339,6 +340,94 @@ public class JavaServer{
             connected = false;
         }
     }
+
+	public LobbyController getLobby() {
+		return lobby;
+	}
+
+	public void setLobby(LobbyController lobby) {
+		this.lobby = lobby;
+	}
+
+	public boolean isRunning() {
+		return running;
+	}
+
+	public void setRunning(boolean running) {
+		this.running = running;
+	}
+
+	public ArrayList<String> getBannedList() {
+		return bannedList;
+	}
+
+	public void setBannedList(ArrayList<String> bannedList) {
+		this.bannedList = bannedList;
+	}
+
+	public boolean isConnected() {
+		return connected;
+	}
+
+	public void setConnected(boolean connected) {
+		this.connected = connected;
+	}
+
+	public MainThread getMainThread() {
+		return mainThread;
+	}
+
+	public void setMainThread(MainThread mainThread) {
+		this.mainThread = mainThread;
+	}
+
+	public String getRunningOn() {
+		return runningOn;
+	}
+
+	public void setRunningOn(String runningOn) {
+		this.runningOn = runningOn;
+	}
+
+	public int getPortNum() {
+		return portNum;
+	}
+
+	public void setPortNum(int portNum) {
+		this.portNum = portNum;
+	}
+
+	public boolean isNogui() {
+		return nogui;
+	}
+
+	public void setNogui(boolean nogui) {
+		this.nogui = nogui;
+	}
+
+	public ServerViewPanel getView() {
+		return view;
+	}
+
+	public void setView(ServerViewPanel view) {
+		this.view = view;
+	}
+
+	public ActionListener getConnectActionListener() {
+		return connectActionListener;
+	}
+
+	public void setConnectActionListener(ActionListener connectActionListener) {
+		this.connectActionListener = connectActionListener;
+	}
+
+	public static String getIpAddr() {
+		return IP_ADDR;
+	}
+
+	public static int getPort() {
+		return PORT;
+	}
 }
 
 

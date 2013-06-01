@@ -1,4 +1,4 @@
-package edu.ucsb.cs56.games.client.Models;
+package edu.ucsb.cs56.games.client_server.v2.client.Models;
 
 /**
  * Username class stores information about a user, such as name, location, etc

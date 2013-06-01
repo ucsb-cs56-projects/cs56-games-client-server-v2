@@ -1,6 +1,8 @@
-package edu.ucsb.cs56.games.server.Controllers;
+package edu.ucsb.cs56.games.client_server.v2.server.Controllers;
 
 import java.util.ArrayList;
+
+import edu.ucsb.cs56.games.client_server.v2.Controllers.JavaServer;
 
 /**
  * Service is an abstract class to be extended by all services
@@ -12,6 +14,7 @@ import java.util.ArrayList;
  */
 
 public abstract class ServiceController{
+
     private static ArrayList<String> serviceList;
     private static int numServices;
     public ArrayList<ClientNetworkController> clients;

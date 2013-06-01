@@ -1,4 +1,4 @@
-package edu.ucsb.cs56.games.server.Models;
+package edu.ucsb.cs56.games.client_server.v2.server.Controllers;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -6,9 +6,8 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 
-import edu.ucsb.cs56.games.client_server.JavaServer;
-import edu.ucsb.cs56.games.client_server.Controllers.Controller;
-import edu.ucsb.cs56.games.client_server.Models.ClientModel;
+import edu.ucsb.cs56.games.client_server.v2.Controllers.JavaServer;
+import edu.ucsb.cs56.games.client_server.v2.Models.ClientModel;
 
 /**
  * Clientconnect is a runnable object representing a connection between the server and a client
@@ -20,16 +19,18 @@ import edu.ucsb.cs56.games.client_server.Models.ClientModel;
 
 //server-wide convention for managing cilents connected to server
 public class ClientNetworkController implements Runnable {
-    private Socket sock;
-    private BufferedReader reader;
-    private PrintWriter writer;
+    Socket sock;
+    BufferedReader reader;
+    PrintWriter writer;
 
-    private boolean closed;
+    boolean closed;
 
     //the client data object
     public ClientModel client;
 
     public ServiceController currentService;
+    
+    private JavaServer server;
 
     //setup
 
@@ -37,10 +38,11 @@ public class ClientNetworkController implements Runnable {
      * set up the clientconnect with a socket
      * @param clientSocket active connection to server
      */
-    public ClientNetworkController(Socket clientSocket) {
+    public ClientNetworkController(Socket clientSocket, JavaServer server) {
+    	this.server = server;
         if(clientSocket == null)
             return;
-        if(JavaServer.isBanned(clientSocket.getRemoteSocketAddress().toString()))
+        if(server.isBanned(clientSocket.getRemoteSocketAddress().toString()))
             closed = true;
         else
             closed = false;
@@ -68,13 +70,13 @@ public class ClientNetworkController implements Runnable {
             if(client == null) {
                 client = new ClientModel(JavaServer.clients.size());
                 JavaServer.clients.add(this);
-                JavaServer.updateServerGUI();
+                server.updateServerGUI();
             }
         }
 
         //tell client what its id is
         sendMessage("ID;"+client.getId());
-        currentService = JavaServer.lobby;
+        currentService = server.getLobby();
         currentService.addClient(this);
         //edu.ucsb.cs56.W12.jcolicchio.issue535.JavaServer.broadcastMessage("CON;"+client.id);
 
@@ -91,7 +93,7 @@ public class ClientNetworkController implements Runnable {
         } catch(Exception ex) {
             System.out.println("closed? "+closed);
             ex.printStackTrace();
-            JavaServer.broadcastMessage("DCON["+client.getId()+"]Client crashed!");
+            server.broadcastMessage("DCON["+client.getId()+"]Client crashed!");
         }
 
         try{
@@ -118,7 +120,7 @@ public class ClientNetworkController implements Runnable {
                 }
             }
         }
-        JavaServer.updateServerGUI();
+        server.updateServerGUI();
     }
 
     /**
@@ -132,7 +134,7 @@ public class ClientNetworkController implements Runnable {
         //do something with the message from the client
         if(string.indexOf("CON;") == 0) {
             //if incoming is CON;, alert everyone that cilent.id has connected
-            JavaServer.broadcastMessage("CON;"+client.getId());
+            server.broadcastMessage("CON;"+client.getId());
         } else if(string.indexOf("DCON;") == 0) {
             //if incoming is DCON;, alert everyone that client.id has disconnected
             disconnect(string.substring(5));
@@ -142,8 +144,8 @@ public class ClientNetworkController implements Runnable {
         } else if(string.indexOf("NAME;") == 0) {
             //change this to just call a function with two parameters
             //it's susceptible to users who try to enter with names that contain ', ], etc
-            if(JavaServer.findClientByName(string.substring(5)) > -1)
-                rename(JavaServer.findUnusedName());
+            if(server.findClientByName(string.substring(5)) > -1)
+                rename(server.findUnusedName());
             else
                 rename(string.substring(5));
         }
@@ -201,7 +203,7 @@ public class ClientNetworkController implements Runnable {
             reason = message.substring(data[0].length()+1);
         }
 
-        id = JavaServer.findClientByName(clientName);
+        id = server.findClientByName(clientName);
         if(id < 0) {
             fromServer("Could not find user: "+clientName);
             return;
@@ -221,13 +223,13 @@ public class ClientNetworkController implements Runnable {
     public void ban(String message) {
         String[] data = message.split(" ");
 
-        int id = JavaServer.findClientByName(data[0]);
+        int id = server.findClientByName(data[0]);
         if(id < 0) {
             fromServer("Could not find user: "+data[0]);
             return;
         }
         ClientNetworkController victim = JavaServer.clients.get(id);
-        JavaServer.banIP(victim.sock.getRemoteSocketAddress().toString());
+        server.banIP(victim.sock.getRemoteSocketAddress().toString());
     }
 
     /**
@@ -237,13 +239,13 @@ public class ClientNetworkController implements Runnable {
     public void unban(String message) {
         String[] data = message.split(" ");
 
-        int id = JavaServer.findClientByName(data[0]);
+        int id = server.findClientByName(data[0]);
         if(id < 0) {
             fromServer("Could not find user: "+data[0]);
             return;
         }
         ClientNetworkController victim = JavaServer.clients.get(id);
-        JavaServer.unbanIP(victim.sock.getRemoteSocketAddress().toString());
+        server.unbanIP(victim.sock.getRemoteSocketAddress().toString());
     }
 
     /**
@@ -266,7 +268,7 @@ public class ClientNetworkController implements Runnable {
         String msg = "DCON["+client.getId()+"]";
         if(message != null)
             msg += message;
-        JavaServer.broadcastMessage(msg);
+        server.broadcastMessage(msg);
     }
 
     //sends message to client
@@ -297,16 +299,16 @@ public class ClientNetworkController implements Runnable {
             fromServer("Invalid name: \""+newName+"\", cannot contain ' ', '/', ']' or ','");
             return;
         }
-        if(JavaServer.findClientByName(newName) >= 0) {
+        if(server.findClientByName(newName) >= 0) {
             fromServer("Name \""+newName+"\" already taken!");
             return;
         }
 
         //this doesn't belong here
         if(!client.getName().equals(""))
-            JavaServer.broadcastMessage("SMSG;"+client.getName()+" changed name to "+newName);
+            server.broadcastMessage("SMSG;"+client.getName()+" changed name to "+newName);
         client.setName(newName);
-        JavaServer.broadcastMessage("NAME["+client.getId()+"]"+client.getName());
+        server.broadcastMessage("NAME["+client.getId()+"]"+client.getName());
     }
 
     /** send a message as the server
@@ -327,8 +329,8 @@ public class ClientNetworkController implements Runnable {
             return;
         }
 
-        int userID = JavaServer.findClientByName(user);
+        int userID = server.findClientByName(user);
         if(userID != -1)
-            JavaServer.broadcastMessage("OP;"+userID);
+            server.broadcastMessage("OP;"+userID);
     }
 }

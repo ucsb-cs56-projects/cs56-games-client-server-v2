@@ -1,4 +1,4 @@
-package edu.ucsb.cs56.games.client.Views;
+package edu.ucsb.cs56.games.client_server.v2.client.Views;
 
 import javax.swing.*;
 
@@ -65,4 +65,28 @@ public class OnlineViewPanel extends GameViewPanel {
     public void mouseExited(MouseEvent mouseEvent){
         //To change body of implemented methods use File | Settings | File Templates.
     }
+
+	public JButton getTicTacToeButton() {
+		return ticTacToeButton;
+	}
+
+	public void setTicTacToeButton(JButton ticTacToeButton) {
+		this.ticTacToeButton = ticTacToeButton;
+	}
+
+	public JButton getGomokuButton() {
+		return gomokuButton;
+	}
+
+	public void setGomokuButton(JButton gomokuButton) {
+		this.gomokuButton = gomokuButton;
+	}
+
+	public JButton getChessButton() {
+		return chessButton;
+	}
+
+	public void setChessButton(JButton chessButton) {
+		this.chessButton = chessButton;
+	}
 }

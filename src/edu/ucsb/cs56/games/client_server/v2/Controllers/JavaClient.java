@@ -1,4 +1,4 @@
-package edu.ucsb.cs56.games.client_server.Controllers;
+package edu.ucsb.cs56.games.client_server.v2.Controllers;
 
 import java.awt.Component;
 import java.awt.Font;
@@ -19,17 +19,16 @@ import java.util.ArrayList;
 
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.DefaultListModel;
-import javax.swing.JButton;
 import javax.swing.JList;
 import javax.swing.SwingUtilities;
 
-import edu.ucsb.cs56.games.client.Models.MessageModel;
-import edu.ucsb.cs56.games.client.Models.UsernameModel;
-import edu.ucsb.cs56.games.client.Views.ClientViewPanel;
-import edu.ucsb.cs56.games.client.Views.OfflineViewPanel;
-import edu.ucsb.cs56.games.client_server.Models.ClientModel;
-import edu.ucsb.cs56.games.server.Controllers.ServiceController;
-//import edu.ucsb.cs56.games.client_server.Models.ResModel;
+import edu.ucsb.cs56.games.client_server.v2.Models.ClientModel;
+import edu.ucsb.cs56.games.client_server.v2.client.Models.MessageModel;
+import edu.ucsb.cs56.games.client_server.v2.client.Models.UsernameModel;
+import edu.ucsb.cs56.games.client_server.v2.client.Views.ClientViewPanel;
+import edu.ucsb.cs56.games.client_server.v2.client.Views.OfflineViewPanel;
+import edu.ucsb.cs56.games.client_server.v2.client.Views.OnlineViewPanel;
+import edu.ucsb.cs56.games.client_server.v2.server.Controllers.ServiceController;
 
 /**
  * JavaClient is the main runnable client-side application, it allows users to connect to a server on a specific port
@@ -136,9 +135,10 @@ public class JavaClient {
     	offlinePanel.getConnectButton().addActionListener(connectActionListener);
     	
     	// Add cell renderer
-    	view.getUserList().setCellRenderer(new MyCellRenderer());
+    	JList userList = view.getUserList();
+    	userList.setCellRenderer(new MyCellRenderer());
+    	view.setUserList(userList);
     	
-
         //TODO: use the standardized list!!
 
         location = -1;
@@ -377,58 +377,42 @@ public class JavaClient {
      * @param L the service id number
      */
     public void changeLocation(int L) {
-    	// XXX later
-        /*if(location == L)
+        if(location == L)
             return;
         location = L;
         if(location == -1) {
-            canvasRef = new OfflineViewPanel(JavaServer.IP_ADDR,JavaServer.PORT);
+            view.setCanvasRef(new OfflineViewPanel());
         } else {
             int serviceType = services.get(location);
             if(serviceType == 0) {
-            ActionListener joinActionListener = new ActionListener() {
-            	public void actionPerformed(ActionEvent actionEvent) { 
-            	    // XXX fix me
-            		sendMessage("MSG;/join " + name);
-            	}
-        	};
-        	this.view.getCanvasRef().get
-			            class JoinGameButton extends JButton implements ActionListener{
-			        String name;
-			        public JoinGameButton(String text) {
-			            super(text);
-			            name = text;
-			            this.addActionListener(this);
-			        }
-			        @Override
-			        public void actionPerformed(ActionEvent actionEvent){
-			            JavaClient.javaClient.sendMessage("MSG;/join " + name);
-			        }
-			    }
-                canvasRef = new OnlineViewPanel();
+            	OnlineViewPanel tmp = new OnlineViewPanel();
+	            ActionListener joinActionListener = new ActionListener() {
+	            	public void actionPerformed(ActionEvent actionEvent) { 
+	            	    // XXX fix me
+	            		sendMessage("MSG;/join " + name);
+	            	}
+	        	};
+	        	tmp.getTicTacToeButton().addActionListener(joinActionListener);
+	        	tmp.getGomokuButton().addActionListener(joinActionListener);
+	        	tmp.getChessButton().addActionListener(joinActionListener);
+	        	view.setCanvasRef(tmp);
             }
-            else if(serviceType == 1)
+            /*else if(serviceType == 1)
                 canvasRef = new TicTacToeViewPanel();
             else if(serviceType == 2)
                 canvasRef = new GomokuViewPanel();
             else if(serviceType == 3)
-                canvasRef = new ChessViewPanel();
+                canvasRef = new ChessViewPanel();*/
         }
 
         SwingUtilities.invokeLater(
             new Runnable() {
                 public void run() {
                     messages = new ArrayList<MessageModel>();
-                    //updateMessages();
-                    container.remove(canvas);
-                    canvas = canvasRef;
-                    container.add(BorderLayout.CENTER, canvas);
-                    canvas.addMouseListener(canvas);
-                    //frame.validate();
-                    container.validate();
+                    view.updateCavnasPanel();
                 }
             }
-        );*/
+        );
     }
 
     /** sends a message to the server, which might be a request for information, game data,

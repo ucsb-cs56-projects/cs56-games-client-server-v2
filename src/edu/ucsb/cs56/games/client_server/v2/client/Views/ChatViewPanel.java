@@ -1,4 +1,4 @@
-package edu.ucsb.cs56.games.client.Views;
+package edu.ucsb.cs56.games.client_server.v2.client.Views;
 
 import java.awt.BorderLayout;
 
