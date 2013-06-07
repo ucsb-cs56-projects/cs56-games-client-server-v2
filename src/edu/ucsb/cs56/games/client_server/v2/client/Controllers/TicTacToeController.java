@@ -17,7 +17,6 @@ public class TicTacToeController extends TwoPlayerGameController {
 	
 	private TicTacToeViewPanel view;
 	boolean isPlaying;
-	private JavaClient client;
 	
 	public TicTacToeController(final JavaClient client) {
 		super(client);

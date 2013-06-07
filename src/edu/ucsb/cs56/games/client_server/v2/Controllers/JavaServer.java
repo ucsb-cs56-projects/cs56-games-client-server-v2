@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import edu.ucsb.cs56.games.client_server.v2.server.Controllers.ClientNetworkController;
 import edu.ucsb.cs56.games.client_server.v2.server.Controllers.LobbyController;
 import edu.ucsb.cs56.games.client_server.v2.server.Controllers.ServiceController;
+import edu.ucsb.cs56.games.client_server.v2.server.Controllers.TicTacToeController;
 import edu.ucsb.cs56.games.client_server.v2.server.Views.ServerViewPanel;
 
 /**
@@ -203,8 +204,9 @@ public class JavaServer{
         if(serviceType == 0)
             service = new LobbyController(serviceID, this);
         // XXX fix later
-        /*else if(serviceType == 1)
-            service = new TicTacToeController(serviceID);
+        else if(serviceType == 1)
+            service = new TicTacToeController(serviceID, this);
+        /*
         else if(serviceType == 2)
             service = new GomokuController(serviceID);
         else if(serviceType == 3)
