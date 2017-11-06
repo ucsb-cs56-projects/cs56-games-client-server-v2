@@ -26,9 +26,9 @@ import edu.ucsb.cs56.games.client_server.v2.server.Views.ServerViewPanel;
  * clientconnect handles server-related input from users and, if necessary, can query the server to find users by name
  * or an available, open game service
  *
- * @author Joseph Colicchio
- * @author Adam Ehrlich
- * @version for CS56, Spring 2013
+ * @author David Roster
+ * @author Harrison Wang
+ * @version for CS56, Spring 2017
  */
 
 //start a java message server that listens for connections to port X and then connects the client 

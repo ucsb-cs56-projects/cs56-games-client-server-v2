@@ -1,0 +1,8 @@
+edu.ucsb.cs56.games.client_server.v2.Controllers
+edu.ucsb.cs56.games.client_server.v2.Models
+edu.ucsb.cs56.games.client_server.v2.client.Controllers
+edu.ucsb.cs56.games.client_server.v2.client.Models
+edu.ucsb.cs56.games.client_server.v2.client.Views
+edu.ucsb.cs56.games.client_server.v2.server.Controllers
+edu.ucsb.cs56.games.client_server.v2.server.Models
+edu.ucsb.cs56.games.client_server.v2.server.Views

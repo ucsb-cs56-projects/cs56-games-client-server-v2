@@ -5,14 +5,20 @@ import edu.ucsb.cs56.games.client_server.v2.Controllers.JavaClient;
 /**
  * Two Player Game Controller which should be extended from for all two player games.
  * 
- * @author Joseph Colicchio
- * @author Adam Ehrlich
- * @version for CS56, Spring 2013
+ * @author David Roster
+ * @author Hong Wang
+ * @version for CS56, Fall 2017
  */
 public class TwoPlayerGameController {
 
 	protected JavaClient client;
 	
+	/**
+	 *TwoPlayerGameController constructor is responsible for redefining the client
+	 with the desired new client for any two-player game
+	 *@param -  JavaClient client
+	 *
+	*/
 	public TwoPlayerGameController(JavaClient client) {
 		this.client = client;
 	}
@@ -21,6 +27,7 @@ public class TwoPlayerGameController {
 	 * Responsible for communicating with the server
 	 * 
 	 * @param string the message from the server
+	 * @return empty function
 	 */
 	public void handleMessage(String string) { }
 	

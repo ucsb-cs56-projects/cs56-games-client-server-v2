@@ -38,9 +38,9 @@ import edu.ucsb.cs56.games.client_server.v2.server.Controllers.ServiceController
  * it is composed of a user list, a message box, input box and send button for chatting, and a panel area to display
  * the lobby or current game
  *
- * @author Joseph Colicchio
- * @author Adam Ehrlich
- * @version for CS56, Spring 2013
+ * @author Hong Wang
+ * @author David Roster
+ * @version for CS56, Fall 2017
  */
 
 //start a java message client that tries to connect to a server at localhost:X
@@ -92,7 +92,8 @@ public class JavaClient {
         view.getSouthPanel().getInputBox().addActionListener(listener);
         view.getSouthPanel().getSendButton().addActionListener(listener);
         
-        MouseListener mouseListener = new MouseAdapter() {
+	//double click to follow
+	MouseListener mouseListener = new MouseAdapter() {
             public void mouseClicked(MouseEvent e) {
                 if (e.getClickCount() == 2) {
                     int index = view.getUserList().locationToIndex(e.getPoint());

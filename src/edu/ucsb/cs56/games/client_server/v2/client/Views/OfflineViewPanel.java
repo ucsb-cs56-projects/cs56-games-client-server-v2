@@ -10,9 +10,9 @@ import java.awt.event.MouseEvent;
  * if the ip and port combination are invalid, it'll stall for a few seconds while it times out
  * in the future, i'd like to have a thread do this, so the gui doesn't freeze with the connect button clicked
  *
- * @author Joseph Colicchio
- * @author Adam Ehrlich
- * @version for CS56, Spring 2013
+ * @author Harrison Wang
+ * @author David Roster
+ * @version for CS56, Spring 2017
  */
 
 //TODO: make new thread when connect is clicked, which is resolved as soon as the connection is made, but does not freeze the gui while waiting
@@ -22,7 +22,9 @@ public class OfflineViewPanel extends GameViewPanel {
     private JTextField port_box;
     private JButton connectButton;
     private JPanel connect_panel;
-    
+    /**
+     *Constructor defines the ip_box , port_box , connectButoon , and connect_panel
+     */
     public OfflineViewPanel() {
         setLayout(new BoxLayout(this,BoxLayout.Y_AXIS));
         
@@ -46,50 +48,76 @@ public class OfflineViewPanel extends GameViewPanel {
         add(connect_panel);
         ip_box.requestFocus();
     }
-
+	/**
+	 *Mouse is clicked
+	 */
     @Override
     public void mouseClicked(MouseEvent mouseEvent){}
-
+	/**
+	 *Mouse is pressed
+	 */
     @Override
     public void mousePressed(MouseEvent mouseEvent){}
-
+	/**
+	 *Mouse is released
+	 */
     @Override
     public void mouseReleased(MouseEvent mouseEvent){}
-
+	/**
+	 *Mouse is entered
+	 */
     @Override
     public void mouseEntered(MouseEvent mouseEvent){}
-
+	/**
+	 *Mouse is exited
+	 */
     @Override
     public void mouseExited(MouseEvent mouseEvent){}
-
+	/**
+	 *Getter function returning ip address in client box
+	 */
 	public JTextField getIp_box() {
 		return ip_box;
 	}
-
+	/**
+	 *Setter function changes client's ip address in box
+	 */
 	public void setIp_box(JTextField ip_box) {
 		this.ip_box = ip_box;
 	}
-
+	/**
+	 *Returns Port ID in client box
+	 */
 	public JTextField getPort_box() {
 		return port_box;
 	}
-
+	/**
+	 *Setter function redefines port id in client box
+	 */
 	public void setPort_box(JTextField port_box) {
 		this.port_box = port_box;
 	}
-
+	/**
+	 *Returns the connect button
+	 */
 	public JButton getConnectButton() {
 		return connectButton;
 	}
-
+	/**
+	 *Setter function that redefines a new connect button
+	 */
 	public void setConnectButton(JButton connectButton) {
 		this.connectButton = connectButton;
 	}
-
+	/**
+	 *Getter returns the clients connect panel
+	 */
 	public JPanel getConnect_panel() {
 		return connect_panel;
 	}
-
+	/**
+	 *Setter redefines the clients connect panel
+	 */
 	public void setConnect_panel(JPanel connect_panel) {
 		this.connect_panel = connect_panel;
 	}

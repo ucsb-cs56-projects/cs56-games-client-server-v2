@@ -7,9 +7,9 @@ import edu.ucsb.cs56.games.client_server.v2.Models.ClientModel;
  * tictactoegame is a tic tac toe game object that stores data about a tic tac toe game, such as placement of Xs and Os,
  * and possibly the winner
  *
- * @author Joseph Colicchio
- * @author Adam Ehrlich
- * @version for CS56, Spring 2013
+ * @author David Roster
+ * @author Harrison Wang
+ * @version for CS56, Spring 2017
  */
 public class TicTacToeModel implements TwoPlayerGameModel {
     public ClientModel player1, player2;

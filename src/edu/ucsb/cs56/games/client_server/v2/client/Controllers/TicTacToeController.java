@@ -9,15 +9,20 @@ import edu.ucsb.cs56.games.client_server.v2.client.Views.TicTacToeViewPanel;
 /**
  * Tic Tac Toe Controller responsible for client game handling
  * 
- * @author Joseph Colicchio
- * @author Adam Ehrlich
- * @version for CS56, Spring 2013
+ * @author David Roster
+ * @author Harrison Wang
+ * @version for CS56, Spring 2017
  */
 public class TicTacToeController extends TwoPlayerGameController {
 	
 	private TicTacToeViewPanel view;
 	boolean isPlaying;
 	
+	/**
+	 * TicTacToeController constructor that calls its superconstructor "client" and 
+	 * defines ActionListener for Tic Tac Toe 
+	 *@param -  final JavaClient client
+	*/
 	public TicTacToeController(final JavaClient client) {
 		super(client);
 		
@@ -109,27 +114,56 @@ public class TicTacToeController extends TwoPlayerGameController {
             view.setWinner(Integer.parseInt(string.substring(7)));
         }
     }
-
+	    /**
+     * Shows the Tic Tac Toe View
+     * @param None
+     * @return Returns the current view
+     */
 	public TicTacToeViewPanel getView() {
 		return view;
 	}
-
+	
+    /**
+     * Sets the new view of Tic Tac Toe
+     * @param TicTacToeViewPanel view
+     * @return The new designated view 
+     */
 	public void setView(TicTacToeViewPanel view) {
 		this.view = view;
 	}
-
+	
+	    /**
+     * Checks to see if the player is still playing Tic Tac Toe
+     * @param None
+     * @return Boolean value true/false of player's playing
+     */
 	public boolean isPlaying() {
 		return isPlaying;
 	}
-
+	
+    /**
+     * Sets a new player to play Tic Tac Toe
+     * @param boolean isPlaying
+     * @return The passed in player as now playing
+     */
 	public void setPlaying(boolean isPlaying) {
 		this.isPlaying = isPlaying;
 	}
-
+	
+	    /**
+     * Returns client which allows user to connect to server and its features
+     * @param None
+     * @return The object client
+     */
 	public JavaClient getClient() {
 		return client;
 	}
-
+	
+	    /**
+     * Changes the designated client to a new specified one
+     * @param JavaClient client
+     * @return The current client is now the passed in client parameter
+     */
 	public void setClient(JavaClient client) {
 		this.client = client;
 	}

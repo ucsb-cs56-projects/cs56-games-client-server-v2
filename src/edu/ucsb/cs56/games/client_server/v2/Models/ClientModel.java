@@ -7,9 +7,9 @@ import java.util.ArrayList;
  * On the client site, client objects represent peer clients, since no actual variables for these clients are provided
  * and the knowledge of their existence is provided only via strings from the server
  *
- * @author Joseph Colicchio
- * @author Adam Ehrlich
- * @version for CS56, Spring 2013
+ * @author David Roster
+ * @author Hong Wang
+ * @version for CS56, Fall 2017
  */
 
 public class ClientModel{
@@ -22,13 +22,16 @@ public class ClientModel{
     static ArrayList<Integer> colors;
     static boolean _init;
 
+    //probably client side 11/3
     public ClientModel(int n) {
         //new client object made, stores data about client
         setId(n);
+	//Maybe add a naming function for nicknames; right now it's "User and numbers" but it can be confusig to read - November 3rd 2017
         setName("User"+n);
         setLocation(0);
     }
     
+    //probably server side - november 3rd 2017
     public ClientModel(int id, String name, int location) {
     	this.id = id;
     	this.name = name;
