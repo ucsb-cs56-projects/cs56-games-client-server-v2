@@ -148,7 +148,9 @@ public class JavaClient {
 
         location = -1;
     }
-
+/**
+ *Creates three new ArrayLists to SetClients, services, and messages.
+ */
 
     public void init() {
         setClients(new ArrayList<ClientModel>());
