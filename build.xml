@@ -24,7 +24,10 @@
   <property name="javadocURL" value="${webBaseUrl}/${projectPath}/javadoc" /> 
   <property name="jwsDest" value="${webRoot}/${projectPath}/jws" /> 
   <property name="jwsURL" value="${webBaseUrl}/${projectPath}/jws" />
+<!--Added in Fall 2017-->
+  <property name="public_javadoc_path" location="../cs56-client-server-javadoc/javadoc"/>
 
+  
   <!-- description 12 -->
   <target name="compile" description="compiles source code">
     <mkdir dir="build" />
@@ -107,6 +110,21 @@
     <copy todir="${javadocDest}" > 
       <fileset dir="javadoc"/> 
     </copy> 
+
+<!-- added in Fall 2017-->
+    <delete quiet="true">                                                                        
+      <fileset dir="${public_javadoc_path}" />                                          
+    </delete>                                                                                    
+    <mkdir dir="${public_javadoc_path}" />                                              
+    <copy todir="${public_javadoc_path}">                                               
+      <fileset dir="javadoc" />                                                                  
+    </copy>                                                                                      
+    <echo>                                                                                       
+      javadoc copied to ${public_javadoc_path}/index.html                               
+      TO PUBLISH: cd into that repo, then git add javadoc;                                       
+        git commit -m "update javadoc"; git push origin master                               
+    </echo>
+
     
     <!-- Note: this only does the chmod command on the 
 	 javadoc subdirectory and its contents.  You MIGHT have to
