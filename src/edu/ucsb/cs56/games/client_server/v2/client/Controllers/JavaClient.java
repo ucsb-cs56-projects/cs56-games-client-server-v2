@@ -1,4 +1,4 @@
-package edu.ucsb.cs56.games.client_server.v2.Controllers;
+package edu.ucsb.cs56.games.client_server.v2.client.Controllers;
 
 import java.awt.Component;
 import java.awt.Font;
@@ -22,7 +22,7 @@ import javax.swing.DefaultListModel;
 import javax.swing.JList;
 import javax.swing.SwingUtilities;
 
-import edu.ucsb.cs56.games.client_server.v2.Models.ClientModel;
+import edu.ucsb.cs56.games.client_server.v2.client.Models.ClientModel;
 import edu.ucsb.cs56.games.client_server.v2.client.Controllers.TicTacToeController;
 import edu.ucsb.cs56.games.client_server.v2.client.Controllers.TwoPlayerGameController;
 import edu.ucsb.cs56.games.client_server.v2.client.Models.MessageModel;

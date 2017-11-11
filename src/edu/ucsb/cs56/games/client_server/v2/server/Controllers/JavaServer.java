@@ -1,4 +1,4 @@
-package edu.ucsb.cs56.games.client_server.v2.Controllers;
+package edu.ucsb.cs56.games.client_server.v2.server.Controllers;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;

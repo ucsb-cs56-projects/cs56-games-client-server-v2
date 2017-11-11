@@ -6,8 +6,8 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 
-import edu.ucsb.cs56.games.client_server.v2.Controllers.JavaServer;
-import edu.ucsb.cs56.games.client_server.v2.Models.ClientModel;
+//import edu.ucsb.cs56.games.client_server.v2.Controllers.JavaServer;
+import edu.ucsb.cs56.games.client_server.v2.client.Models.ClientModel;
 
 /**
  * Clientconnect is a runnable object representing a connection between the server and a client

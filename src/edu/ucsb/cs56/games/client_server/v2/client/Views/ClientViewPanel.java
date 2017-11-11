@@ -17,7 +17,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.ListSelectionModel;
 
-import edu.ucsb.cs56.games.client_server.v2.Controllers.JavaServer;
+import edu.ucsb.cs56.games.client_server.v2.server.Controllers.JavaServer;
 
 /**
  * Main Client Panel

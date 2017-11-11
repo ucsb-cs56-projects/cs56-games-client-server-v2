@@ -11,8 +11,8 @@ import java.awt.geom.GeneralPath;
 
 import javax.swing.JPanel;
 
-import edu.ucsb.cs56.games.client_server.v2.Controllers.JavaClient;
-import edu.ucsb.cs56.games.client_server.v2.Models.ClientModel;
+import edu.ucsb.cs56.games.client_server.v2.client.Controllers.JavaClient;
+import edu.ucsb.cs56.games.client_server.v2.client.Models.ClientModel;
 import edu.ucsb.cs56.games.client_server.v2.client.Controllers.TicTacToeController;
 
 

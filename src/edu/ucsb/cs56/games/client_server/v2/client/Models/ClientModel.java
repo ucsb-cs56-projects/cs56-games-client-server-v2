@@ -1,4 +1,4 @@
-package edu.ucsb.cs56.games.client_server.v2.Models;
+package edu.ucsb.cs56.games.client_server.v2.client.Models;
 
 import java.util.ArrayList;
 

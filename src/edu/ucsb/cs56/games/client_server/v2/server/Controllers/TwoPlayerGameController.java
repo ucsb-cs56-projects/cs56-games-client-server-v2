@@ -2,7 +2,7 @@ package edu.ucsb.cs56.games.client_server.v2.server.Controllers;
 
 import java.util.ArrayList;
 
-import edu.ucsb.cs56.games.client_server.v2.Controllers.JavaServer;
+//import edu.ucsb.cs56.games.client_server.v2.Controllers.JavaServer;
 
 /**
  * an abstract service classification for games which have two players
