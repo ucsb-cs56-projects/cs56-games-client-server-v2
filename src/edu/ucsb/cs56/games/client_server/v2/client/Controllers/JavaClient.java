@@ -44,28 +44,7 @@ import edu.ucsb.cs56.games.client_server.v2.server.Controllers.ServiceController
  */
 
 //start a java message client that tries to connect to a server at localhost:X
-public class JavaClient {
-    private ClientViewPanel view = null;
-
-    private Socket sock;
-    private InputStreamReader stream;
-    private BufferedReader reader;
-    private PrintWriter writer;
-
-    private ArrayList<ClientModel> clients;
-    private ArrayList<Integer> services;
-    
-    private ArrayList<MessageModel> messages;
-    
-    private int id;
-    private String name;
-    private int location;
-    
-    private InputReader thread;
-    private RefreshThread refreshThread;
-    private boolean connected;
-    
-    private TwoPlayerGameController gameController = null;
+public class JavaClient extends JavaClientHelperMethods{   
 
     public static void main(String [] args) {
         JavaClient javaClient = new JavaClient();
@@ -253,133 +232,49 @@ public class JavaClient {
      * @param string the data from the server to handle
      */
     public void handleMessage(String string) {
-        if(string.indexOf("CON;") == 0) {
-            int pid = Integer.parseInt(string.substring(4));
-            System.out.println("Client "+pid+" has connected");
-            while(getClients().size() <= pid)
-                getClients().add(null);
-            if(getClients().get(pid) == null)
-                getClients().set(pid, new ClientModel(pid));
-            else
-                sendMessage("INFO;");
-            messages.add(new MessageModel(getClients().get(pid).getName()+" connected", "Server",true,false));
-            updateClients();
-            updateMessages();
-        } else if(string.indexOf("DCON[") == 0) {
-            String[] data = string.substring(5).split("]");
-            int pid = Integer.parseInt(data[0]);
-            System.out.println("Client " + pid + " has disconnected: " + data[1]);
-            if(getClients().size() > pid && getClients().get(pid) != null) {
-                messages.add(new MessageModel(getClients().get(pid).getName() + " disconnected: "+data[1], "Server", true, false));
-                getClients().set(pid, null);
-            }
-            updateClients();
-            updateMessages();
-            if(pid == getId())
-                thread.running = false;
-        } else if(string.indexOf("MSG[") == 0) {
-            String[] data = string.substring(4).split("]");
-            int pid = Integer.parseInt(data[0]);
-            if(getClients().size() <= pid || getClients().get(pid) == null)
-                return;
-            String msg = string.substring(4+data[0].length()+1);
-            System.out.println("Client "+pid+" said "+msg);
-            if(getClients().size() > pid) {
-                messages.add(new MessageModel(msg,getClients().get(pid).getName(),false,false));
-                updateMessages();
-            }
-        } else if(string.indexOf("PMSG[") == 0) {
-            String[] data = string.substring(5).split("]");
-            int pid = Integer.parseInt(data[0]);
-            String msg = string.substring(5+data[0].length()+1);
-            System.out.println("Client "+pid+" privately said "+msg);
-            if(getClients().size() > pid) {
-                messages.add(new MessageModel(msg,getClients().get(pid).getName(), true, false));
-                updateMessages();
-            }
-        } else if(string.indexOf("RMSG[") == 0) {
-            String[] data = string.substring(5).split("]");
-            int pid = Integer.parseInt(data[0]);
-            String msg = string.substring(5+data[0].length()+1);
-            if(getClients().size() > pid) {
-                messages.add(new MessageModel(msg,getClients().get(pid).getName(),true,true));
-                updateMessages();
-            }
-        } else if(string.indexOf("SMSG;") == 0) {
-            String msg = string.substring(5);
-            if(msg != null && msg.length() > 0) {
-                messages.add(new MessageModel(msg,"Server",true,false));
-                updateMessages();
-            }
-        } else if(string.indexOf("ID;") == 0) {
-            setId(Integer.parseInt(string.substring(3)));
-            if(name == null)
-                name = "User"+getId();
 
-            sendMessage("CON;");
-            sendMessage("NAME;"+name);
-            sendMessage("INFO;");
-            System.out.println(location);
-        } else if(string.indexOf("ALL;") == 0) {
-            String[] connected = string.substring(4).split(";");
-            for(int i=0;i<connected.length;i++) {
-                String[] info = connected[i].split(",");
-                if(getClients().size() <= i)
-                    getClients().add(null);
-                if(connected[i].equals(","))
-                    continue;
-                if(info[0].equals("")) {
-                    if(getClients().get(i) != null)
-                        getClients().set(i, null);
-                } else {
-                    getClients().set(i, new ClientModel(i, info[0], Integer.parseInt(info[1])));
-                    if(getId() == i)
-                        changeLocation(Integer.parseInt(info[1]));
-                }
-            }
-            //the problem is here, we need to have something else removing the clients from the list and re-adding them
-            //otherwise when the thing redraws, it'll freak out
-            updateClients();
-        } else if(string.indexOf("SERV;") == 0) {
-            String[] serv = string.substring(5).split(",");
-            for(int i=0;i<serv.length;i++) {
-                if(services.size() <= i)
-                    services.add(null);
-                services.set(i, Integer.parseInt(serv[i]));
-            }
-            updateClients();
-            changeLocation(location);
-        } else if(string.indexOf("NEW;") == 0) {
+	if(string.indexOf("CON;") == 0) {
+            handleMessageCON(string);
+        }
+	else if(string.indexOf("DCON[") == 0) {
+            handleMessageDCON(string);
+        }
+	else if(string.indexOf("MSG[") == 0) {
+            handleMessageMSG(string);
+        }
+	else if(string.indexOf("PMSG[") == 0) {
+            handleMessagePMSG(string);
+        }
+	else if(string.indexOf("RMSG[") == 0) {
+            handleMessageRMSG(string);
+        }
+	else if(string.indexOf("SMSG;") == 0) {
+            handleMessageSMSG(string);
+        }
+	else if(string.indexOf("ID;") == 0) {
+            handleMessageID(string);
+        }
+	else if(string.indexOf("ALL;") == 0) {
+            handleMessageALL(string);
+        }
+	else if(string.indexOf("SERV;") == 0) {
+            handleMessageSERV(string);
+        }
+	else if(string.indexOf("NEW;") == 0) {
             services.add(Integer.parseInt(string.substring(4)));
-        } else if(string.indexOf("NAME[") == 0) {
-            String[] data = string.substring(5).split("]");
-            int pid = Integer.parseInt(data[0]);
-            String pname = data[1];
-            if(getClients().size() <= pid)
-                return;
-            if(getClients().get(pid) == null)
-                getClients().set(pid, new ClientModel(getId(), pname, 0));
-            //messages.add(new edu.ucsb.cs56.W12.jcolicchio.issue535.Message(clients.get(pid).name+" changed his name to "+pname, "Server",true,false,clients.get(0).getColor()));
-            getClients().get(pid).setName(pname);
-            if(pid == getId())
-                name = pname;
-            updateClients();
-            updateMessages();
-        } else if(string.indexOf("MOVED[") == 0) {
-            String[] data = string.substring(6).split("]");
-            int pid = Integer.parseInt(data[0]);
-            getClients().get(pid).setLocation(Integer.parseInt(data[1]));
-            if(pid == getId()) {
-                changeLocation(getClients().get(getId()).getLocation());
-            }
-            updateClients();
-            updateMessages();
+        }
+	else if(string.indexOf("NAME[") == 0) {
+            handleMessageNAME(string);
+        }
+	else if(string.indexOf("MOVED[") == 0) {
+            handleMessageMOVED(string);
         }
         // XXX fix?
         if (gameController != null)
         	gameController.handleMessage(string);
     }
 
+    
     /** changes the location of the client, in order to generate a service panel associated with
      * that location to start interacting with the specified service
      * @param L the service id number
@@ -462,65 +357,6 @@ public class JavaClient {
     public ClientViewPanel getView() {
 		return this.view;
 	}
-
-    //Classes within the class starts from here
-    
-    /** listens for the send button's action and sends a message, if connected
-     *
-     */
-    class SendListener implements ActionListener {
-        public SendListener() {
-
-        }
-
-        public void actionPerformed(ActionEvent event) {
-            String message = view.getSouthPanel().getInputBox().getText();
-            if(message.length() == 0)
-                return;
-
-            view.getSouthPanel().getInputBox().setText("");
-            if(isConnected()) {
-                sendMessage("MSG;"+message);
-            }
-        }
-    }
-
-    /** input reader waits for data from the server and forwards it to the client
-     *
-     */
-    class InputReader extends Thread implements Runnable {
-        public boolean running;
-        public void run() {
-            String line;
-            running = true;
-            try {
-                while(running && (line = reader.readLine()) != null) {
-                    System.out.println("incoming... "+line);
-                    handleMessage(line);
-                }
-            } catch(SocketException ex) {
-                ex.printStackTrace();
-                System.out.println("lost connection to server...");
-            } catch(Exception ex) {
-                ex.printStackTrace();
-                System.out.println("crashed for some other reason, disconnecting...");
-                writer.println("DCON;"+getId());
-                writer.flush();
-            }
-
-            try{
-                sock.close();
-            }catch(IOException e){
-                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-            }
-            setConnected(false);
-            view.getOutputBox().setText("");
-            updateClients();
-            changeLocation(-1);
-            System.out.println("quitting, cause thread ended");
-            //System.exit(0);
-        }
-    }
 
 }
 
