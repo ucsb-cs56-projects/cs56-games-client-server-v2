@@ -33,10 +33,7 @@ import edu.ucsb.cs56.games.client_server.v2.client.Views.OnlineViewPanel;
 import edu.ucsb.cs56.games.client_server.v2.server.Controllers.ServiceController;
 
 /**
- * JavaClient is the main runnable client-side application, it allows users to connect to a server on a specific port
- * and chat with other connected users, as well as play games like tic tac toe, gomoku, and chess with them
- * it is composed of a user list, a message box, input box and send button for chatting, and a panel area to display
- * the lobby or current game
+ * This class exists to provide helper methods for handleMessage() from JavaClient to make it more readable. The two classes used to be within JavaClient were also moved here.
  *
  * @author Hong Wang
  * @author David Roster
@@ -79,7 +76,10 @@ public abstract class JavaClientHelperMethods {
     public abstract void handleMessage(java.lang.String string);
     public abstract void updateClients();
     public abstract void updateMessages();
-    
+
+    /**
+ *Handle the message for connection.
+ */
     protected void handleMessageCON(String string){
 	int pid = Integer.parseInt(string.substring(4));
             System.out.println("Client "+pid+" has connected");
@@ -93,7 +93,10 @@ public abstract class JavaClientHelperMethods {
             updateClients();
             updateMessages();
     }
-    
+
+    /**
+ *Handle the message for disconnection.
+ */
     protected void handleMessageDCON(String string){
 	String[] data = string.substring(5).split("]");
             int pid = Integer.parseInt(data[0]);
@@ -107,7 +110,10 @@ public abstract class JavaClientHelperMethods {
             if(pid == getId())
                 thread.running = false;
     }
-    
+
+    /**
+ *Handle the message for public messages.
+ */
     protected void handleMessageMSG(String string){
          String[] data = string.substring(4).split("]");
             int pid = Integer.parseInt(data[0]);
@@ -121,6 +127,9 @@ public abstract class JavaClientHelperMethods {
             }
     }
 
+    /**
+ *Handle the message for private messages.
+ */
     protected void handleMessagePMSG(String string){
 	 String[] data = string.substring(5).split("]");
             int pid = Integer.parseInt(data[0]);
@@ -132,6 +141,9 @@ public abstract class JavaClientHelperMethods {
             }
     }
 
+    /**
+ *Handle the message for receiving messages.
+ */
     protected void handleMessageRMSG(String string){
 	String[] data = string.substring(5).split("]");
             int pid = Integer.parseInt(data[0]);
@@ -142,6 +154,9 @@ public abstract class JavaClientHelperMethods {
             }	
     }
 
+    /**
+ *Handle the message for sending messages.
+ */
     protected void handleMessageSMSG(String string){
 	String msg = string.substring(5);
             if(msg != null && msg.length() > 0) {
@@ -150,6 +165,9 @@ public abstract class JavaClientHelperMethods {
             }
     }
 
+    /**
+ *Handle the message for ID.
+ */
     protected void handleMessageID(String string){
 	setId(Integer.parseInt(string.substring(3)));
             if(name == null)
@@ -160,7 +178,10 @@ public abstract class JavaClientHelperMethods {
             sendMessage("INFO;");
             System.out.println(location);
     }
-    
+
+    /**
+ *Handle the message for all.
+ */
     protected void handleMessageALL(String string){
 	String[] connected = string.substring(4).split(";");
             for(int i=0;i<connected.length;i++) {
@@ -183,6 +204,9 @@ public abstract class JavaClientHelperMethods {
             updateClients();
     }
 
+    /**
+ *Handle the message for services.
+ */
     protected void handleMessageSERV(String string){
 	String[] serv = string.substring(5).split(",");
             for(int i=0;i<serv.length;i++) {
@@ -194,6 +218,9 @@ public abstract class JavaClientHelperMethods {
             changeLocation(location);
     }
 
+    /**
+ *Handle the message for names.
+ */
     protected void handleMessageNAME(String string){
 	String[] data = string.substring(5).split("]");
             int pid = Integer.parseInt(data[0]);
@@ -210,6 +237,9 @@ public abstract class JavaClientHelperMethods {
             updateMessages();
     }
 
+    /**
+ *Handle the message for moving location.
+ */
     protected void handleMessageMOVED(String string){
 	String[] data = string.substring(6).split("]");
             int pid = Integer.parseInt(data[0]);
