@@ -33,10 +33,7 @@ import edu.ucsb.cs56.games.client_server.v2.client.Views.OnlineViewPanel;
 import edu.ucsb.cs56.games.client_server.v2.server.Controllers.ServiceController;
 
 /**
- * JavaClient is the main runnable client-side application, it allows users to connect to a server on a specific port
- * and chat with other connected users, as well as play games like tic tac toe, gomoku, and chess with them
- * it is composed of a user list, a message box, input box and send button for chatting, and a panel area to display
- * the lobby or current game
+ * These two classes used to be in JavaClient.java, but they were moved into this file for better readability since they are parallel to JavaClient class.
  *
  * @author Hong Wang
  * @author David Roster

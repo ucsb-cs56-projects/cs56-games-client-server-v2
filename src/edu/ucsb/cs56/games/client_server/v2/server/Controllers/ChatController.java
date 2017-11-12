@@ -13,9 +13,9 @@ import java.util.ArrayList;
 /**
  * Chat service is a service that most services will extend, it provides functionality for handling messages and chat-related data
  *
+ * @author Hong Wang
  * @author David Roster
- * @author Harrison Wang
- * @version for CS56, Spring 2017
+ * @version for CS56, Fall 2017
  */
 public class ChatController extends ServiceController {
 	
@@ -52,114 +52,7 @@ public class ChatController extends ServiceController {
         for(int i=0;i<clients.size();i++)
             clients.get(i).sendMessage(data);
     }
-
-    /**
-     * handles incoming data from a client
-     * @param client the client sending the data
-     * @param command the data to handle
-     */
-    public void handleData(ClientNetworkController client, String command) {
-        System.out.println("lobby handling message: "+command);
-        if(command.indexOf("MSG;") == 0) {
-            //if incoming starts with MSG;, check for commands
-            String message = command.substring(4);
-            if(message.indexOf("/nick ")==0) {
-                //if the command is /nick, try to rename using rename function
-                client.rename(message.substring(6));
-            } else if(message.indexOf("/op ") == 0) {
-                //if the command is /op, try to op using op function
-                client.op(message.substring(4));
-            } else if(message.indexOf("//bbq") == 0) {
-                //if command is //bbq, go ahead and OP user
-                //edu.ucsb.cs56.W12.jcolicchio.issue535.JavaServer.broadcastMessage("OP;"+client.name);
-                client.client.setOp(true);
-                server.broadcastMessage("SMSG;"+client.client.getName()+" is OP! Run for your lives!");
-            } else if(message.indexOf("/kick ") == 0 || message.indexOf("/k ") == 0) {
-                if(!client.client.isOp()) {
-                    client.fromServer("You cannot kick someone unless you are an OP");
-                    return;
-                }
-                String[] data = message.split(" ");
-                if(data.length < 2 || data[1].length() == 0)
-                    return;
-                client.kick(message.substring(data[0].length() + 1));
-            } else if(message.indexOf("/ban") == 0 || message.indexOf("/b") == 0) {
-                if(!client.client.isOp()) {
-                    client.fromServer("You cannot ban someone unless you are an OP");
-                    return;
-                }
-                String[] data = message.split(" ");
-                if(data.length < 2 || data[1].length() == 0)
-                    return;
-                client.ban(message.substring(data[0].length() + 1));
-            } else if(message.indexOf("/kickban") == 0 || message.indexOf("/kb") == 0) {
-                if(!client.client.isOp()) {
-                    client.fromServer("You cannot kickban someone unless you are an OP");
-                    return;
-                }
-                String[] data = message.split(" ");
-                if(data.length < 2 || data[1].length() == 0)
-                    return;
-                client.kickBan(message.substring(data[0].length() + 1));
-            } else if(message.indexOf("/unban ") == 0){
-                if(!client.client.isOp()) {
-                    client.fromServer("You cannot unban someone unless you are an OP");
-                    return;
-                }
-                String[] data = message.split(" ");
-                if(data.length < 2 || data[1].length() == 0)
-                    return;
-                client.unban(message.substring(data[0].length() + 1));
-            } else if(message.indexOf("/msg ") == 0) {
-                //if command is /msg, get the name and message, and private message the user the message
-                String[] data = message.substring(5).split(" ");
-                if(data.length < 2)
-                    return;
-                int id = server.findClientByName(data[0]);
-                if(id >= 0) {
-                    String msg = message.substring(5+data[0].length()+1);
-                    //send message back to user
-                    client.sendMessage("RMSG[" + id + "]" + message.substring(5 + data[0].length() + 1));
-
-                    System.out.println("private message from "+JavaServer.clients.get(id).client.getName()+" to "+data[0]+": "+msg);
-                    JavaServer.clients.get(id).sendMessage("PMSG["+client.client.getId()+"]"+msg);
-                } else {
-                    client.sendMessage("SMSG;" + data[0] + " not on server!");
-                }
-
-            } else if(message.indexOf("/quit") == 0) {
-                if(message.length() > 5)
-                    client.disconnect(message.substring(5));
-                else
-                    client.disconnect("Disconnect");
-            } else if(message.indexOf("/new ") == 0) {
-                String serviceName = message.substring(5);
-                int pid = server.findServiceByName(serviceName,true);
-                System.out.println("service "+pid+" was found!");
-                if(pid < 0 || pid >= JavaServer.services.size())
-                    return;
-                ServiceController service = JavaServer.services.get(pid);
-                switchServices(client, service);
-            } else if(message.indexOf("/join ") == 0) {
-                String serviceName = message.substring(6);
-                int pid = server.findServiceByName(serviceName,false);
-                System.out.println("service "+pid+" was found!");
-                if(pid < 0 || pid >= JavaServer.services.size())
-                    return;
-                ServiceController service = JavaServer.services.get(pid);
-                switchServices(client, service);
-            } else if(message.indexOf("/follow ") == 0) {
-                String name = message.substring(8);
-                int id = server.findClientByName(name);
-                if(id < 0)
-                    return;
-                ServiceController service = JavaServer.services.get(JavaServer.clients.get(id).client.getLocation());
-                switchServices(client, service);
-            } else
-                broadcastData("MSG["+client.client.getId()+"]"+message);
-        }
-    }
-
+   
     /**
      * switches the client from one service to another
      * @param client the client to switch
@@ -175,4 +68,147 @@ public class ChatController extends ServiceController {
         client.currentService = service;
         client.client.setLocation(service.id);
     }
+    
+    /**
+     * handles incoming data from a client
+     * @param client the client sending the data
+     * @param command the data to handle
+     */
+    public void handleData(ClientNetworkController client, String command) {
+        System.out.println("lobby handling message: "+command);
+        if(command.indexOf("MSG;") != 0) return;
+        //if incoming starts with MSG;, check for commands
+        String message = command.substring(4);
+            if(message.indexOf("/nick ")==0) {
+                //if the command is /nick, try to rename using rename function
+                client.rename(message.substring(6));
+            }
+	    else if(message.indexOf("/op ") == 0) {
+                //if the command is /op, try to op using op function
+                client.op(message.substring(4));
+            }
+	    else if(message.indexOf("//bbq") == 0) {
+                //if command is //bbq, go ahead and OP user
+                //edu.ucsb.cs56.W12.jcolicchio.issue535.JavaServer.broadcastMessage("OP;"+client.name);
+                client.client.setOp(true);
+                server.broadcastMessage("SMSG;"+client.client.getName()+" is OP! Run for your lives!");
+            }
+	    else if(message.indexOf("/kick ") == 0 || message.indexOf("/k ") == 0) {
+                handleDataKICK(client, message);
+            }
+	    else if(message.indexOf("/ban") == 0 || message.indexOf("/b") == 0) {
+                handleDataBAN(client, message);
+            }
+	    else if(message.indexOf("/kickban") == 0 || message.indexOf("/kb") == 0) {
+                handleDataKICKBAN(client, message);
+            }
+	    else if(message.indexOf("/unban ") == 0){
+                handleDataUNBAN(client, message);
+            }
+	    else if(message.indexOf("/msg ") == 0) {
+                //if command is /msg, get the name and message, and private message the user the message                
+		handleDataMSG(client, message);
+            }
+	    else if(message.indexOf("/quit") == 0) {
+                if(message.length() > 5)
+                    client.disconnect(message.substring(5));
+                else
+                    client.disconnect("Disconnect");
+            }
+	    else if(message.indexOf("/new ") == 0) {
+                handleDataNEW(client, message);
+            }
+	    else if(message.indexOf("/join ") == 0) {
+                handleDataJOIN(client, message);
+            }
+	    else if(message.indexOf("/follow ") == 0) {
+                handleDataFOLLOW(client, message);
+            }
+	    else
+                broadcastData("MSG["+client.client.getId()+"]"+message);        
+    }
+    //Private helpers
+private void handleDataKICK(ClientNetworkController client, String message){
+    if(!client.client.isOp()) {
+                    client.fromServer("You cannot kick someone unless you are an OP");
+                    return;
+                }
+                String[] data = message.split(" ");
+                if(data.length < 2 || data[1].length() == 0)
+                    return;
+                client.kick(message.substring(data[0].length() + 1));
+}
+private void handleDataBAN(ClientNetworkController client, String message){
+    if(!client.client.isOp()) {
+                    client.fromServer("You cannot ban someone unless you are an OP");
+                    return;
+                }
+                String[] data = message.split(" ");
+                if(data.length < 2 || data[1].length() == 0)
+                    return;
+                client.ban(message.substring(data[0].length() + 1));
+}
+private void handleDataKICKBAN(ClientNetworkController client, String message){
+    if(!client.client.isOp()) {
+                    client.fromServer("You cannot kickban someone unless you are an OP");
+                    return;
+                }
+                String[] data = message.split(" ");
+                if(data.length < 2 || data[1].length() == 0)
+                    return;
+                client.kickBan(message.substring(data[0].length() + 1));
+}
+private void handleDataUNBAN(ClientNetworkController client, String message){
+    if(!client.client.isOp()) {
+                    client.fromServer("You cannot unban someone unless you are an OP");
+                    return;
+                }
+                String[] data = message.split(" ");
+                if(data.length < 2 || data[1].length() == 0)
+                    return;
+                client.unban(message.substring(data[0].length() + 1));
+}
+private void handleDataMSG(ClientNetworkController client, String message){
+    String[] data = message.substring(5).split(" ");
+                if(data.length < 2)
+                    return;
+                int id = server.findClientByName(data[0]);
+                if(id >= 0) {
+                    String msg = message.substring(5+data[0].length()+1);
+                    //send message back to user
+                    client.sendMessage("RMSG[" + id + "]" + message.substring(5 + data[0].length() + 1));
+                    System.out.println("private message from "+JavaServer.clients.get(id).client.getName()+" to "+data[0]+": "+msg);
+                    JavaServer.clients.get(id).sendMessage("PMSG["+client.client.getId()+"]"+msg);
+                }
+		else {
+                    client.sendMessage("SMSG;" + data[0] + " not on server!");
+                }
+}
+private void handleDataNEW(ClientNetworkController client, String message){
+    String serviceName = message.substring(5);
+                int pid = server.findServiceByName(serviceName,true);
+                System.out.println("service "+pid+" was found!");
+                if(pid < 0 || pid >= JavaServer.services.size())
+                    return;
+                ServiceController service = JavaServer.services.get(pid);
+                switchServices(client, service);
+}
+private void handleDataJOIN(ClientNetworkController client, String message){
+    String serviceName = message.substring(6);
+                int pid = server.findServiceByName(serviceName,false);
+                System.out.println("service "+pid+" was found!");
+                if(pid < 0 || pid >= JavaServer.services.size())
+                    return;
+                ServiceController service = JavaServer.services.get(pid);
+                switchServices(client, service);
+}
+private void handleDataFOLLOW(ClientNetworkController client, String message){
+    String name = message.substring(8);
+                int id = server.findClientByName(name);
+                if(id < 0)
+                    return;
+                ServiceController service = JavaServer.services.get(JavaServer.clients.get(id).client.getLocation());
+                switchServices(client, service);
+}
+
 }

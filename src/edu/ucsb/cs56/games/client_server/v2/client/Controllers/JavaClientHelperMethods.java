@@ -33,10 +33,7 @@ import edu.ucsb.cs56.games.client_server.v2.client.Views.OnlineViewPanel;
 import edu.ucsb.cs56.games.client_server.v2.server.Controllers.ServiceController;
 
 /**
- * JavaClient is the main runnable client-side application, it allows users to connect to a server on a specific port
- * and chat with other connected users, as well as play games like tic tac toe, gomoku, and chess with them
- * it is composed of a user list, a message box, input box and send button for chatting, and a panel area to display
- * the lobby or current game
+ * This class exists to provide helper methods for handleMessage() from JavaClient to make it more readable. The two classes used to be within JavaClient were also moved here.
  *
  * @author Hong Wang
  * @author David Roster
@@ -67,11 +64,8 @@ public abstract class JavaClientHelperMethods {
     protected TwoPlayerGameController gameController = null;
     
     public abstract void changeLocation(int L);
-    //public abstract void connect(java.lang.String ip, int port);
     public abstract java.util.ArrayList<ClientModel> getClients();
     public abstract int getId();
-    //public abstract ClientViewPanel getView();
-    //public abstract void init();
     public abstract boolean isConnected();
     public abstract void setConnected(boolean connected);
     public abstract void setId(int id);
@@ -79,8 +73,11 @@ public abstract class JavaClientHelperMethods {
     public abstract void handleMessage(java.lang.String string);
     public abstract void updateClients();
     public abstract void updateMessages();
-    
-    protected void handleMessageCON(String string){
+
+    /**
+ *Handle the message for connection.
+ */
+    public void handleMessageCON(String string){
 	int pid = Integer.parseInt(string.substring(4));
             System.out.println("Client "+pid+" has connected");
             while(getClients().size() <= pid)
@@ -93,8 +90,11 @@ public abstract class JavaClientHelperMethods {
             updateClients();
             updateMessages();
     }
-    
-    protected void handleMessageDCON(String string){
+
+    /**
+ *Handle the message for disconnection.
+ */
+    public void handleMessageDCON(String string){
 	String[] data = string.substring(5).split("]");
             int pid = Integer.parseInt(data[0]);
             System.out.println("Client " + pid + " has disconnected: " + data[1]);
@@ -107,8 +107,11 @@ public abstract class JavaClientHelperMethods {
             if(pid == getId())
                 thread.running = false;
     }
-    
-    protected void handleMessageMSG(String string){
+
+    /**
+ *Handle the message for public messages.
+ */
+    public void handleMessageMSG(String string){
          String[] data = string.substring(4).split("]");
             int pid = Integer.parseInt(data[0]);
             if(getClients().size() <= pid || getClients().get(pid) == null)
@@ -121,7 +124,10 @@ public abstract class JavaClientHelperMethods {
             }
     }
 
-    protected void handleMessagePMSG(String string){
+    /**
+ *Handle the message for private messages.
+ */
+    public void handleMessagePMSG(String string){
 	 String[] data = string.substring(5).split("]");
             int pid = Integer.parseInt(data[0]);
             String msg = string.substring(5+data[0].length()+1);
@@ -132,7 +138,10 @@ public abstract class JavaClientHelperMethods {
             }
     }
 
-    protected void handleMessageRMSG(String string){
+    /**
+ *Handle the message for receiving messages.
+ */
+    public void handleMessageRMSG(String string){
 	String[] data = string.substring(5).split("]");
             int pid = Integer.parseInt(data[0]);
             String msg = string.substring(5+data[0].length()+1);
@@ -142,7 +151,10 @@ public abstract class JavaClientHelperMethods {
             }	
     }
 
-    protected void handleMessageSMSG(String string){
+    /**
+ *Handle the message for sending messages.
+ */
+    public void handleMessageSMSG(String string){
 	String msg = string.substring(5);
             if(msg != null && msg.length() > 0) {
                 messages.add(new MessageModel(msg,"Server",true,false));
@@ -150,7 +162,10 @@ public abstract class JavaClientHelperMethods {
             }
     }
 
-    protected void handleMessageID(String string){
+    /**
+ *Handle the message for ID.
+ */
+    public void handleMessageID(String string){
 	setId(Integer.parseInt(string.substring(3)));
             if(name == null)
                 name = "User"+getId();
@@ -160,8 +175,11 @@ public abstract class JavaClientHelperMethods {
             sendMessage("INFO;");
             System.out.println(location);
     }
-    
-    protected void handleMessageALL(String string){
+
+    /**
+ *Handle the message for all.
+ */
+    public void handleMessageALL(String string){
 	String[] connected = string.substring(4).split(";");
             for(int i=0;i<connected.length;i++) {
                 String[] info = connected[i].split(",");
@@ -183,7 +201,10 @@ public abstract class JavaClientHelperMethods {
             updateClients();
     }
 
-    protected void handleMessageSERV(String string){
+    /**
+ *Handle the message for services.
+ */
+    public void handleMessageSERV(String string){
 	String[] serv = string.substring(5).split(",");
             for(int i=0;i<serv.length;i++) {
                 if(services.size() <= i)
@@ -194,7 +215,10 @@ public abstract class JavaClientHelperMethods {
             changeLocation(location);
     }
 
-    protected void handleMessageNAME(String string){
+    /**
+ *Handle the message for names.
+ */
+    public void handleMessageNAME(String string){
 	String[] data = string.substring(5).split("]");
             int pid = Integer.parseInt(data[0]);
             String pname = data[1];
@@ -210,7 +234,10 @@ public abstract class JavaClientHelperMethods {
             updateMessages();
     }
 
-    protected void handleMessageMOVED(String string){
+    /**
+ *Handle the message for moving location.
+ */
+    public void handleMessageMOVED(String string){
 	String[] data = string.substring(6).split("]");
             int pid = Integer.parseInt(data[0]);
             getClients().get(pid).setLocation(Integer.parseInt(data[1]));
