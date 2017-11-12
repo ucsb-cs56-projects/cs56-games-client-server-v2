@@ -62,7 +62,7 @@ public class TicTacToeViewPanel extends TwoPlayerGameViewPanel {
     }
     
     /**
-     *Initializes grid
+     *Initializes grid, redundant from constructor
      */
     public void init() {
     	// This is redundant, will probably remove
@@ -80,7 +80,7 @@ public class TicTacToeViewPanel extends TwoPlayerGameViewPanel {
      */
     class TicTacToeCanvas extends JPanel implements MouseListener {
 	/**
-	 *Colors in our Tic Tac Toe
+	 *Colors in our Tic Tac Toe and creates ready states that draw in each user's move into the boarditself with an X or O. This also deals with which player whens and loses.
 	 */
         @Override
         public void paintComponent(Graphics g) {
@@ -197,7 +197,7 @@ public class TicTacToeViewPanel extends TwoPlayerGameViewPanel {
             }
         }
 		/**
-		 *Not completed yet
+		 *Returns what the mouse clicked!
 		 */
 		@Override
 		public void mouseClicked(MouseEvent arg0) {
@@ -205,7 +205,7 @@ public class TicTacToeViewPanel extends TwoPlayerGameViewPanel {
 			
 		}
 		/**
-		 *Not completed yet
+		 *Overriden method, says when mouse has enetered our respected defined region
 		 */
 		@Override
 		public void mouseEntered(MouseEvent arg0) {
@@ -213,7 +213,7 @@ public class TicTacToeViewPanel extends TwoPlayerGameViewPanel {
 			
 		}
 		/**
-		 *Not completed yet
+		 *Overriden method that knows when the user uses the mouse to enter a region of space.
 		 */
 		@Override
 		public void mouseExited(MouseEvent arg0) {
@@ -221,7 +221,7 @@ public class TicTacToeViewPanel extends TwoPlayerGameViewPanel {
 			
 		}
 		/**
-		 *Not completed yet
+		 *Overriden method that knows when the mouse is released off a button by a user
 		 */
 		@Override
 		public void mouseReleased(MouseEvent arg0) {
@@ -284,7 +284,7 @@ public class TicTacToeViewPanel extends TwoPlayerGameViewPanel {
 		return offsetY;
 	}
 	/**
-	 *Resets OffsetY
+	 *Resets OffsetY with its updated value
 	 */
 	public void setOffsetY(int offsetY) {
 		this.offsetY = offsetY;
@@ -326,7 +326,7 @@ public class TicTacToeViewPanel extends TwoPlayerGameViewPanel {
 		this.panelSize = panelSize;
 	}
 	/**
-	 *Returns top margin
+	 *Returns top margin  - this is what we use to base grid size off and size of each square.
 	 */
 	public int getTopMargin() {
 		return topMargin;
@@ -338,7 +338,7 @@ public class TicTacToeViewPanel extends TwoPlayerGameViewPanel {
 		this.topMargin = topMargin;
 	}
 	/**
-	 *Returns bottom margin
+	 *Returns bottom margin - this is what we use to calculate each of the squares of our grid
 	 */
 	public int getBottomMargin() {
 		return bottomMargin;
@@ -356,13 +356,13 @@ public class TicTacToeViewPanel extends TwoPlayerGameViewPanel {
 		return grid;
 	}
 	/**
-	 *Resets the double array with our new values 
+	 *Resets the double array with our new values based on board position.
 	 */
 	public void setGrid(int[][] grid) {
 		this.grid = grid;
 	}
 	/**
-	 *Goes to specific location in grid and marks respected value
+	 *Goes to specific location in grid and  marks respected value with user's X or O
 	 */
 	public void setGridSpot(int i, int j, int value) {
 		this.grid[i][j] = value;

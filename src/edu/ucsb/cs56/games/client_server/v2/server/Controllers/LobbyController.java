@@ -7,9 +7,9 @@ package edu.ucsb.cs56.games.client_server.v2.server.Controllers;//Lobbyservice i
  * extends chat service and does little else. quite honestly, it doesn't do much else besides extend chatservice, so
  * its existence is largely pointless
  *
- * @author Joseph Colicchio
- * @author Adam Ehrlich
- * @version for CS56, Spring 2013
+ * @author David Roster
+ * @author Harrison Wang
+ * @version for CS56, Spring 2017
  */
 
 public class LobbyController extends ChatController {

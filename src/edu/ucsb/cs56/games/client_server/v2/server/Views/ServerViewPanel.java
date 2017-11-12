@@ -26,7 +26,10 @@ public class ServerViewPanel {
 	private JTextField portBox;
 	private JButton connectButton;
 	private JLabel status;
-	
+
+    	/**
+	 *The constructor creates a new frame for the server with a textbox to input the server's port number, an exit and open button, and a label recording activity on the server.
+	 */
 	public ServerViewPanel(int port) {
 		mainFrame = new JFrame();
 		
@@ -50,51 +53,77 @@ public class ServerViewPanel {
 	    mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	    mainFrame.setVisible(true);
 	}
+/**
+ *Returns the server application 
+ */
 
 	public JFrame getMainFrame() {
 		return mainFrame;
 	}
-
+/**
+ *Resets the server's frame if it is resized or when first created.
+ */
 	public void setMainFrame(JFrame mainFrame) {
 		this.mainFrame = mainFrame;
 	}
-
+/**
+ *Main is the JPanel where the port input and server button are stored on.
+ */
 	public JPanel getMain() {
 		return main;
 	}
-
+/**
+ *SetMain is used to modify our panel with widgets on it, however the panel is fixed size
+ */
 	public void setMain(JPanel main) {
 		this.main = main;
 	}
-
+/**
+ *Conatiner is defined as our Servers' content pane. We are just returning whats on our server application here. 
+ */
 	public Container getContainer() {
 		return container;
 	}
-
+/**
+ *SetContainer allows us to change the entire look of our server easily. However, it is basically just used to create and setup our container.
+ */
 	public void setContainer(Container container) {
 		this.container = container;
 	}
-
+/**
+ *Returns the Port ID the user typed into the box
+ */
 	public JTextField getPortBox() {
 		return portBox;
 	}
+/**
+ *Used to reset the port ID box and orginally create it.
+ */
 
 	public void setPortBox(JTextField portBox) {
 		this.portBox = portBox;
 	}
-
+/**
+ *We can call this method to see when the server side connect button is pressed - thus creating an open server for clients to join
+ */
 	public JButton getConnectButton() {
 		return connectButton;
 	}
-
+/**
+ *Allows us to set the dimmensions of our connect butoon and give it a name
+ */
 	public void setConnectButton(JButton connectButton) {
 		this.connectButton = connectButton;
 	}
-
+/**
+ *Returns the number of users in server along with its activity.
+ */
 	public JLabel getStatus() {
 		return status;
 	}
-
+/**
+ *Allows us to change the settings based on the flow of game.
+ */
 	public void setStatus(JLabel status) {
 		this.status = status;
 	}

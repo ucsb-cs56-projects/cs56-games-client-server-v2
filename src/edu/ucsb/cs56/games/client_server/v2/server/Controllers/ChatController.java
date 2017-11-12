@@ -13,9 +13,9 @@ import java.util.ArrayList;
 /**
  * Chat service is a service that most services will extend, it provides functionality for handling messages and chat-related data
  *
- * @author Joseph Colicchio
- * @author Adam Ehrlich
- * @version for CS56, Spring 2013
+ * @author David Roster
+ * @author Harrison Wang
+ * @version for CS56, Spring 2017
  */
 public class ChatController extends ServiceController {
 	

@@ -58,6 +58,10 @@ public class TicTacToeController extends TwoPlayerGameController {
     	view.getNewGameButton().addActionListener(newGameActionListener);
 	}
     
+     /**
+    *Handles the printing of the Tic Tac Toe game based on the move and game positioning of the user. It analizes the game board and responds with the correct statement.
+    *
+    */ 
     @Override
     public void handleMessage(String string) {
         System.out.println("handling as tictactoe: "+string);

@@ -13,9 +13,9 @@ import edu.ucsb.cs56.games.client_server.v2.client.Models.ClientModel;
  * Clientconnect is a runnable object representing a connection between the server and a client
  * it provides all functionality for transmitting data to clients and receiving incoming data from them
  *
- * @author Joseph Colicchio
- * @author Adam Ehrlich
- * @version for CS56, Spring 2013
+ * @author David Roster
+ * @author Harrison Wang
+ * @version for CS56, Spring 2017
  */
 
 //server-wide convention for managing cilents connected to server

@@ -55,7 +55,9 @@ public class JavaServer{
     private ServerViewPanel view = null;
     
     private ActionListener connectActionListener;
-
+    /**
+     *start a java message server that listens for connections to port X 
+     */
     public static void main(String [] args) {
         if(args.length > 0) {
             try {
@@ -278,7 +280,9 @@ public class JavaServer{
         	this.server = server;
             portNum = P;
         }
-        
+	/**
+         *Takes a potential client that wants to connect and runs it in a thread
+	 */
         public void run() {
             running = true;
             clients = new ArrayList<ClientNetworkController>();
@@ -343,91 +347,135 @@ public class JavaServer{
             connected = false;
         }
     }
-
+    /**
+     *Returns an instance of our LobbyController class that is in charge of users
+     */
 	public LobbyController getLobby() {
 		return lobby;
 	}
-
+    /**
+     *Returns are modified lobby when a new user connects or an user disconnects
+     */
 	public void setLobby(LobbyController lobby) {
 		this.lobby = lobby;
 	}
-
+    /**
+     *Returns the value of our server thread to see if it is still active
+     */
 	public boolean isRunning() {
 		return running;
 	}
-
+    /**
+     *Used to create thread that our server runs on to connect with potential clients
+     */
 	public void setRunning(boolean running) {
 		this.running = running;
 	}
-
+    /**
+     *Returns an ArrayList of users banned from Lobby. THis could be because of offensive language, unfair gameplay, ect.
+     */
 	public ArrayList<String> getBannedList() {
 		return bannedList;
 	}
-
+    /**
+     *Modifies our list of banned clients by either potentially removing or adding clients
+     */
 	public void setBannedList(ArrayList<String> bannedList) {
 		this.bannedList = bannedList;
 	}
-
+    /**
+     *Returns whether a potential client has connected to the server
+     */
 	public boolean isConnected() {
 		return connected;
 	}
-
+    /**
+     *Allows to set a client with the server to play games
+     */
 	public void setConnected(boolean connected) {
 		this.connected = connected;
 	}
-
+    /**
+     *Returns the main thread our server runs on
+     */
 	public MainThread getMainThread() {
 		return mainThread;
 	}
-
+    /**
+     *Sets the main thread of our server when the server is first started
+     */
 	public void setMainThread(MainThread mainThread) {
 		this.mainThread = mainThread;
 	}
-
+    /**
+     *Finds out which thread client is running on
+     */
 	public String getRunningOn() {
 		return runningOn;
 	}
-
+    /**
+     *Can reset a client's thread if there is trouble connecting
+     */
 	public void setRunningOn(String runningOn) {
 		this.runningOn = runningOn;
 	}
-
+    /**
+     *Gets the port number of the server
+     */
 	public int getPortNum() {
 		return portNum;
 	}
-
+    /**
+     *Can redefine the port number of the server
+     */
 	public void setPortNum(int portNum) {
 		this.portNum = portNum;
 	}
-
+    /**
+     *Checks to see if there is a GUI windown for the server. The server can still run via command line.
+     */
 	public boolean isNogui() {
 		return nogui;
 	}
-
+    /**
+     *Can change the potential server gui window - mostly used for creation of the server window primarily
+     */
 	public void setNogui(boolean nogui) {
 		this.nogui = nogui;
 	}
-
+    /**
+     *Returns server view panel which contains the port number box and connect button for the server application.
+     */
 	public ServerViewPanel getView() {
 		return view;
 	}
-
+    /**
+     *Sets the view for the server application which is the little window
+     */
 	public void setView(ServerViewPanel view) {
 		this.view = view;
 	}
-
+    /**
+     *Returns the LIstener we are using to hear calls made by our widgets
+     */
 	public ActionListener getConnectActionListener() {
 		return connectActionListener;
 	}
-
+    /**
+     *creates an action listener to listen for transactions between server and its widgets
+     */
 	public void setConnectActionListener(ActionListener connectActionListener) {
 		this.connectActionListener = connectActionListener;
 	}
-
+    /**
+     *Returns the ip address of the server, in our case this is the local host ip
+     */
 	public static String getIpAddr() {
 		return IP_ADDR;
 	}
-
+    /**
+     *Gets the port number that are server is using.
+     */
 	public static int getPort() {
 		return PORT;
 	}

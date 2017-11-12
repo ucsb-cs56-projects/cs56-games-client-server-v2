@@ -21,7 +21,9 @@ public class TicTacToeModel implements TwoPlayerGameModel {
     public TicTacToeModel() {
         init();
     }
-
+/**
+ *Initializes the state of our grid board for the server. That way the server can also follow the game closely and make announcements off the flow of the game.
+ */
     public void init() {
         grid = new int[3][3];
         for(int i=0;i<3;i++)
@@ -31,7 +33,9 @@ public class TicTacToeModel implements TwoPlayerGameModel {
         turn = 1;
         winner = 0;
     }
-
+/**
+ *Checks to see who won by comparing three of a pattern whether diagonal, vertical, or horizontal. Only returns true/false since this is a helper method but can print "no winner found" if the game is still contuing.
+ */
     public boolean checkWinner() {
         for(int j=1;j<3;j++) {
             for(int i=0;i<3;i++) {
@@ -56,7 +60,9 @@ public class TicTacToeModel implements TwoPlayerGameModel {
         System.out.println("no winner found");
         return false;
     }
-    
+        /**
+     *Parses our incoming string into an array and defines the new state of our Tic Tac Toe grid.
+     */
     public void setState(String data) {
         String[] info = data.substring(6).split("]");
         int turnInfo = Integer.parseInt(info[0]);
@@ -75,7 +81,10 @@ public class TicTacToeModel implements TwoPlayerGameModel {
         }
         checkWinner();
     }
-    
+        /**
+     *Sees the current state of the board, and analyzes it to see if their is a current winner by calling the checkWinner() method. 
+     */
+
     public String getState() {
         String state = "STATE[";
         if(winner == 0)

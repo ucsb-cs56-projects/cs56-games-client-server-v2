@@ -33,28 +33,29 @@ public class ChatViewPanel extends JPanel {
         this.add(BorderLayout.CENTER, inputBox);
     }
 	/**
-	 *A simple getter function that returns the current inputBox
+	 *Returns the inputBox which is the textfield the user types in.
 	 *
 	 */
 	public JTextField getInputBox() {
 		return inputBox;
 	}
 	/**
-	 *Sets the inputBox used for texting in the chat
+	 *Sets the inputBox used for texting in the chat in the beginning or resizes it based off window size change.
 	 *
 	 */
 	public void setInputBox(JTextField inputBox) {
 		this.inputBox = inputBox;
 	}
 	/**
-	 *A simple getter function to return the Chat's send button
+	 *A getter to see whether the send button for our user typing a message was pressed
 	 *
 	 */
 	public JButton getSendButton() {
 		return sendButton;
 	}
 	/**
-	 *A simple setter function that sets our "send button" for our chat
+	 *A simple setter function that sets our "send button" for our chat box depending on chat application size.
+
 	 */
 	public void setSendButton(JButton sendButton) {
 		this.sendButton = sendButton;
