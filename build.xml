@@ -10,12 +10,13 @@
   <property name="webBaseUrl" value="http://www.cs.ucsb.edu/~${env.USER}/" />
   <property name="course" value="cs56" />
   <property name="topic" value="games" />
-  <property name="description" value="client_server.v2.Controllers" />
+  <!--Edited-->
+  <property name="description" value="client_server.v2" />
   <property name="clientName" value="JavaClient" />
   <property name="serverName" value="JavaServer" />
   <property name="projectName" value="${clientName}" />
-  <property name="clientClass" value="edu.ucsb.${course}.${topic}.${description}.${clientName}" />
-  <property name="serverClass" value="edu.ucsb.${course}.${topic}.${description}.${serverName}" />
+  <property name="clientClass" value="edu.ucsb.${course}.${topic}.${description}.client.Controllers.${clientName}" />
+  <property name="serverClass" value="edu.ucsb.${course}.${topic}.${description}.server.Controllers.${serverName}" />
 
 
   <property name="projectPath" value="${course}/${topic}/${description}" />
