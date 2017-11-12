@@ -1,6 +1,5 @@
 package edu.ucsb.cs56.games.client_server.v2.client.Controllers;
 
-
 import java.awt.Component;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
@@ -33,9 +32,8 @@ import edu.ucsb.cs56.games.client_server.v2.client.Views.OfflineViewPanel;
 import edu.ucsb.cs56.games.client_server.v2.client.Views.OnlineViewPanel;
 import edu.ucsb.cs56.games.client_server.v2.server.Controllers.ServiceController;
 
-
 /**
- * (temp)JavaClient is the main runnable client-side application, it allows users to connect to a server on a specific port
+ * JavaClient is the main runnable client-side application, it allows users to connect to a server on a specific port
  * and chat with other connected users, as well as play games like tic tac toe, gomoku, and chess with them
  * it is composed of a user list, a message box, input box and send button for chatting, and a panel area to display
  * the lobby or current game
@@ -45,10 +43,30 @@ import edu.ucsb.cs56.games.client_server.v2.server.Controllers.ServiceController
  * @version for CS56, Fall 2017
  */
 
-public class JavaClient extends JavaClientProto{
+//start a java message client that tries to connect to a server at localhost:X
+public class JavaClient {
+    private ClientViewPanel view = null;
 
-    protected InputReader thread;
+    private Socket sock;
+    private InputStreamReader stream;
+    private BufferedReader reader;
+    private PrintWriter writer;
+
+    private ArrayList<ClientModel> clients;
+    private ArrayList<Integer> services;
     
+    private ArrayList<MessageModel> messages;
+    
+    private int id;
+    private String name;
+    private int location;
+    
+    private InputReader thread;
+    private RefreshThread refreshThread;
+    private boolean connected;
+    
+    private TwoPlayerGameController gameController = null;
+
     public static void main(String [] args) {
         JavaClient javaClient = new JavaClient();
     }
@@ -130,8 +148,69 @@ public class JavaClient extends JavaClientProto{
 
         location = -1;
     }
+/**
+ *Creates three new ArrayLists to SetClients, services, and messages.
+ */
 
-/** connect is called when the player enters an IP and port number, and clicks connect
+    public void init() {
+        setClients(new ArrayList<ClientModel>());
+        services = new ArrayList<Integer>();
+        messages = new ArrayList<MessageModel>();
+    }
+
+    /** updateClients updates the client list with the names and locations of everyone on the server
+     * should be called whenever a user joins, leaves, or changes locations
+     */
+    public void updateClients() {
+        SwingUtilities.invokeLater(
+            new Runnable() {
+                public void run() {
+                    synchronized (getClients()) {
+                    	DefaultListModel listModel = view.getListModel();
+                        listModel.clear();
+                        if(location < 0)
+                            return;
+                        listModel.addElement(new UsernameModel(name,null,2));
+                        for(int i=getClients().size()-1;i>=0;i--) {
+                            ClientModel client = getClients().get(i);
+                            if(client != null) {
+                                if(client.getId() == getId())
+                                    continue;
+                                if(client.getLocation() == location || services.size() <= client.getLocation())
+                                    listModel.insertElementAt((new UsernameModel(client.getName(),null,0)),1);
+                                else {
+//                                    System.out.println(client.location+", "+serviceList.size()+", "+services.size());
+                                    listModel.addElement(new UsernameModel(client.getName()," ("+client.getLocation()+":"+ServiceController.getGameType(services.get(client.getLocation()))+")",1));
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        );
+    }
+
+    /** updateMessages updates the message box, and then scrolls down to the bottom to see the most recent
+     * message. should be called whenever a new message is received
+     */
+    public void updateMessages() {
+        SwingUtilities.invokeLater(
+            new Runnable() {
+                public void run() {
+                    String content = "";
+                    for(int i=0;i<messages.size();i++) {
+                        content += messages.get(i).toString() + "<br>";
+                    }
+                    view.getOutputBox().setText(content);
+                    int caret = view.getOutputBox().getDocument().getLength()-1;
+                    if(caret > 0)
+                    	view.getOutputBox().setCaretPosition(caret);
+                }
+            }
+        );
+    }
+
+    /** connect is called when the player enters an IP and port number, and clicks connect
      * it attempts to connect the player to the associated running server if it exists
      * @param ip - the ip address string to connect to
      * @param port - the port number
@@ -156,55 +235,17 @@ public class JavaClient extends JavaClientProto{
         } catch(IOException ex) {
             ex.printStackTrace();
             System.out.println("unable to connect");
+            //System.out.println("quitting...");
+            //System.exit(1);
         }
     }
 
-/** changes the location of the client, in order to generate a service panel associated with
-     * that location to start interacting with the specified service
-     * @param L the service id number
-     */
-    public void changeLocation(int L) {
-        if(location == L)
-            return;
-        location = L;
-        if(location == -1) {
-            view.setCanvasRef(new OfflineViewPanel());
-        } else {
-            int serviceType = services.get(location);
-            if(serviceType == 0) {
-            	OnlineViewPanel tmp = new OnlineViewPanel();
-	            ActionListener joinActionListener = new ActionListener() {
-	            	public void actionPerformed(ActionEvent actionEvent) { 
-	            	    // XXX fix me
-	            		String tst = actionEvent.getActionCommand();
-	            		sendMessage("MSG;/join " + tst);
-	            	}
-	        	};
-	        	tmp.getTicTacToeButton().addActionListener(joinActionListener);
-	        	tmp.getGomokuButton().addActionListener(joinActionListener);
-	        	tmp.getChessButton().addActionListener(joinActionListener);
-	        	view.setCanvasRef(tmp);
-            }
-            else if(serviceType == 1) {
-            	gameController = new TicTacToeController(this);
-                view.setCanvasRef(((TicTacToeController)gameController).getView());
-            }
-            /*else if(serviceType == 2)
-                canvasRef = new GomokuViewPanel();
-            else if(serviceType == 3)
-                canvasRef = new ChessViewPanel();*/
-        }
+    //public void update() {
+    //    for(int i=0;i<clients.size();i++)
+    //        if(clients.get(i) != null)
+    //            clients.get(i).update();
+    //}
 
-        SwingUtilities.invokeLater(
-            new Runnable() {
-                public void run() {
-                    messages = new ArrayList<MessageModel>();
-                    view.updateCavnasPanel();
-                }
-            }
-        );
-    }
-    
     /** handleMessage is passed a string which has been sent from the server
      * it attempts to resolve the request but may forward it to the active game panel, if applicable
      * it manages things like users connecting, disconnecting, receiving private messages, nick changes, etc
@@ -339,6 +380,111 @@ public class JavaClient extends JavaClientProto{
         	gameController.handleMessage(string);
     }
 
+    /** changes the location of the client, in order to generate a service panel associated with
+     * that location to start interacting with the specified service
+     * @param L the service id number
+     */
+    public void changeLocation(int L) {
+        if(location == L)
+            return;
+        location = L;
+        if(location == -1) {
+            view.setCanvasRef(new OfflineViewPanel());
+        } else {
+            int serviceType = services.get(location);
+            if(serviceType == 0) {
+            	OnlineViewPanel tmp = new OnlineViewPanel();
+	            ActionListener joinActionListener = new ActionListener() {
+	            	public void actionPerformed(ActionEvent actionEvent) { 
+	            	    // XXX fix me
+	            		String tst = actionEvent.getActionCommand();
+	            		sendMessage("MSG;/join " + tst);
+	            	}
+	        	};
+	        	tmp.getTicTacToeButton().addActionListener(joinActionListener);
+	        	tmp.getGomokuButton().addActionListener(joinActionListener);
+	        	tmp.getChessButton().addActionListener(joinActionListener);
+	        	view.setCanvasRef(tmp);
+            }
+            else if(serviceType == 1) {
+            	gameController = new TicTacToeController(this);
+                view.setCanvasRef(((TicTacToeController)gameController).getView());
+            }
+            /*else if(serviceType == 2)
+                canvasRef = new GomokuViewPanel();
+            else if(serviceType == 3)
+                canvasRef = new ChessViewPanel();*/
+        }
+
+        SwingUtilities.invokeLater(
+            new Runnable() {
+                public void run() {
+                    messages = new ArrayList<MessageModel>();
+                    view.updateCavnasPanel();
+                }
+            }
+        );
+    }
+
+    /** sends a message to the server, which might be a request for information, game data,
+     * or a literal message to be broadcast to all users in the message box
+     * @param string a string of data to send to the server
+     */
+    public void sendMessage(String string) {
+        writer.println(string);
+        writer.flush();
+    }
+
+    public ArrayList<ClientModel> getClients() {
+		return clients;
+	}
+
+    public void setClients(ArrayList<ClientModel> clients) {
+		this.clients = clients;
+	}
+
+    public int getId() {
+		return id;
+	}
+
+    public void setId(int id) {
+		this.id = id;
+	}
+
+    public boolean isConnected() {
+		return connected;
+	}
+
+    public void setConnected(boolean connected) {
+		this.connected = connected;
+	}
+
+    public ClientViewPanel getView() {
+		return this.view;
+	}
+
+    //Classes within the class starts from here
+    
+    /** listens for the send button's action and sends a message, if connected
+     *
+     */
+    class SendListener implements ActionListener {
+        public SendListener() {
+
+        }
+
+        public void actionPerformed(ActionEvent event) {
+            String message = view.getSouthPanel().getInputBox().getText();
+            if(message.length() == 0)
+                return;
+
+            view.getSouthPanel().getInputBox().setText("");
+            if(isConnected()) {
+                sendMessage("MSG;"+message);
+            }
+        }
+    }
+
     /** input reader waits for data from the server and forwards it to the client
      *
      */
@@ -376,9 +522,6 @@ public class JavaClient extends JavaClientProto{
         }
     }
 
-	public ClientViewPanel getView() {
-		return this.view;
-	}
-
 }
-    
+
+
