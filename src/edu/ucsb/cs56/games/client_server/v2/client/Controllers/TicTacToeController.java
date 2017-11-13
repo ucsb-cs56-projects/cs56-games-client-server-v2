@@ -58,7 +58,7 @@ public class TicTacToeController extends TwoPlayerGameController {
     	view.getNewGameButton().addActionListener(newGameActionListener);
 	}
     
-     /**
+    /**
     *Handles the printing of the Tic Tac Toe game based on the move and game positioning of the user. It analizes the game board and responds with the correct statement.
     *
     */ 
@@ -67,7 +67,8 @@ public class TicTacToeController extends TwoPlayerGameController {
         System.out.println("handling as tictactoe: "+string);
         if(string.indexOf("INIT;") == 0) {
             view.init();
-        } else if(string.indexOf("STATE[") == 0) {
+        }
+	else if(string.indexOf("STATE[") == 0) {
         	String[] info = string.substring(6).split("]");
         	String[] rows = info[1].split(";");
             for(int i=0;i<3;i++) {
@@ -76,23 +77,32 @@ public class TicTacToeController extends TwoPlayerGameController {
                     view.setGridSpot(i, j, Integer.parseInt(cols[j]));
                 }
             }
-        } else if(string.indexOf("MOVE[") == 0) {
+        }
+	else if(string.indexOf("MOVE[") == 0) {
             String[] data = string.substring(5).split("]");
             int pid = Integer.parseInt(data[0]);
             String[] coords = data[1].split(",");
             int X = Integer.parseInt(coords[0]);
             int Y = Integer.parseInt(coords[1]);
-
             view.setGridSpot(Y, X, pid);
             view.setTurn(3 - pid);
-        } else if(string.indexOf("PLAYERS;") == 0) {
-            String[] data = string.substring(8).split(",");
+        }
+	else if(string.indexOf("PLAYERS;") == 0) {
+            handleMessagePLAYERS(string);
+        }
+	else if(string.indexOf("WINNER;")==0) {
+            view.setWinner(Integer.parseInt(string.substring(7)));
+        }
+    }
+    private void handleMessagePLAYERS(String string) {
+	String[] data = string.substring(8).split(",");
             int pid1 = Integer.parseInt(data[0]);
             int pid2 = Integer.parseInt(data[1]);
             System.out.println(pid1+", "+client.getClients().size());
             if(pid1 >= 0 && pid1 < client.getClients().size()) {
                 view.setPlayer1(client.getClients().get(Integer.parseInt(data[0])));
-            } else
+            }
+	    else
             	view.setPlayer1(null);
             if(pid2 >= 0 && pid2 < client.getClients().size())
             	view.setPlayer2(client.getClients().get(Integer.parseInt(data[1])));
@@ -105,7 +115,8 @@ public class TicTacToeController extends TwoPlayerGameController {
                     view.getNewGameButton().setEnabled(true);
                 else
                 	view.getNewGameButton().setEnabled(false);
-            } else {
+            }
+	    else {
                 isPlaying = false;
                 view.getNewGameButton().setEnabled(false);;
             }
@@ -114,11 +125,10 @@ public class TicTacToeController extends TwoPlayerGameController {
                 view.getPlaySpecButton().setEnabled(true);
             else
             	view.getPlaySpecButton().setEnabled(false);
-        } else if(string.indexOf("WINNER;")==0) {
-            view.setWinner(Integer.parseInt(string.substring(7)));
-        }
     }
-	    /**
+
+
+    /**
      * Shows the Tic Tac Toe View
      * @param None
      * @return Returns the current view
