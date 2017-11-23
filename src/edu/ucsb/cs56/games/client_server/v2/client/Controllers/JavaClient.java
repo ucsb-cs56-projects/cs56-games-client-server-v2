@@ -120,7 +120,7 @@ public class JavaClient extends JavaClientHelperMethods{
     	
     	// Add cell renderer
     	JList userList = view.getUserList();
-    	userList.setCellRenderer(new MyCellRenderer());
+    	userList.setCellRenderer(new JavaClientHelperClasses.MyCellRenderer());
     	view.setUserList(userList);
     	
         //TODO: use the standardized list!!
@@ -209,7 +209,7 @@ public class JavaClient extends JavaClientHelperMethods{
             sendMessage("ACKNOWLEDGE ME!");
             thread = new InputReader();
             thread.start();
-            refreshThread = new RefreshThread(this);
+            refreshThread = new JavaClientHelperClasses.RefreshThread(this);
             refreshThread.start();
         } catch(IOException ex) {
             ex.printStackTrace();

@@ -44,7 +44,9 @@ import edu.ucsb.cs56.games.client_server.v2.server.Controllers.ServiceController
  * useful when a user is in another location
  * or to highlight the client's username
  */
-class MyCellRenderer extends DefaultListCellRenderer {
+
+public class JavaClientHelperClasses {
+    public static class MyCellRenderer extends DefaultListCellRenderer {
 
     public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
         Component c = super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
@@ -64,7 +66,7 @@ class MyCellRenderer extends DefaultListCellRenderer {
 /**
  * refresh thread constantly repaints the application
  */
-class RefreshThread extends Thread implements Runnable {
+    public static class RefreshThread extends Thread implements Runnable {
     public boolean running;
     JavaClient javaClient;
     public RefreshThread(JavaClient client) {
@@ -91,4 +93,6 @@ class RefreshThread extends Thread implements Runnable {
             }
         }
     }
+}
+
 }
