@@ -1,4 +1,5 @@
-package edu.ucsb.cs56.games.client_server.v2.server.Models;
+//package edu.ucsb.cs56.games.client_server.v2.server.Models;
+package edu.ucsb.cs56.games.client_server.v2.games.Models;
 
 import edu.ucsb.cs56.games.client_server.v2.client.Models.ClientModel;
 

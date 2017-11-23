@@ -1,10 +1,10 @@
-package edu.ucsb.cs56.games.client_server.v2.client.Controllers;
+package edu.ucsb.cs56.games.client_server.v2.games.ClientControllers;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-//import edu.ucsb.cs56.games.client_server.v2.Controllers.JavaClient;
-import edu.ucsb.cs56.games.client_server.v2.client.Views.TicTacToeViewPanel;
+import edu.ucsb.cs56.games.client_server.v2.client.Controllers.JavaClient;
+import edu.ucsb.cs56.games.client_server.v2.games.Views.TicTacToeViewPanel;
 
 /**
  * Tic Tac Toe Controller responsible for client game handling

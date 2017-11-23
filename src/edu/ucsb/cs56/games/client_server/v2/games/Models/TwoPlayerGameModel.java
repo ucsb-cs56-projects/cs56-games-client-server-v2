@@ -1,4 +1,5 @@
-package edu.ucsb.cs56.games.client_server.v2.server.Models;
+//package edu.ucsb.cs56.games.client_server.v2.server.Models;
+package edu.ucsb.cs56.games.client_server.v2.games.Models;
 
 /**
  * Basic two player game interface which is to be used to store the main 3 functions that every two

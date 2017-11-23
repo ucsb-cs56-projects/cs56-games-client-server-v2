@@ -1,4 +1,4 @@
-package edu.ucsb.cs56.games.client_server.v2.client.Views;
+package edu.ucsb.cs56.games.client_server.v2.games.Views;
 
 import java.awt.BasicStroke;
 import java.awt.BorderLayout;
@@ -13,7 +13,7 @@ import javax.swing.JPanel;
 
 import edu.ucsb.cs56.games.client_server.v2.client.Controllers.JavaClient;
 import edu.ucsb.cs56.games.client_server.v2.client.Models.ClientModel;
-import edu.ucsb.cs56.games.client_server.v2.client.Controllers.TicTacToeController;
+import edu.ucsb.cs56.games.client_server.v2.games.ClientControllers.TicTacToeController;
 
 
 /**

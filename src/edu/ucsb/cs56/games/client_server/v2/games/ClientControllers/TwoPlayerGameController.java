@@ -1,6 +1,6 @@
-package edu.ucsb.cs56.games.client_server.v2.client.Controllers;
+package edu.ucsb.cs56.games.client_server.v2.games.ClientControllers;
 
-//import edu.ucsb.cs56.games.client_server.v2.Controllers.JavaClient;
+import edu.ucsb.cs56.games.client_server.v2.client.Controllers.JavaClient;
 
 /**
  * Two Player Game Controller which should be extended from for all two player games.

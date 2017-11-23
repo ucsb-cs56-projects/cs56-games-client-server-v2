@@ -1,6 +1,7 @@
-package edu.ucsb.cs56.games.client_server.v2.server.Controllers;
+package edu.ucsb.cs56.games.client_server.v2.games.ServerControllers;
 
-//import edu.ucsb.cs56.games.client_server.v2.Controllers.JavaServer;
+import edu.ucsb.cs56.games.client_server.v2.server.Controllers.JavaServer;
+import edu.ucsb.cs56.games.client_server.v2.server.Controllers.ClientNetworkController;
 import edu.ucsb.cs56.games.client_server.v2.server.Models.TicTacToeModel;
 
 /**
