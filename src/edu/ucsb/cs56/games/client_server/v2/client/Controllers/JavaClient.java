@@ -44,8 +44,30 @@ import edu.ucsb.cs56.games.client_server.v2.server.Controllers.ServiceController
  */
 
 //start a java message client that tries to connect to a server at localhost:X
-public class JavaClient extends JavaClientHelperMethods{   
+public class JavaClient{   
 
+    protected ClientViewPanel view = null;
+
+    protected Socket sock;
+    protected InputStreamReader stream;
+    protected BufferedReader reader;
+    protected PrintWriter writer;
+
+    protected ArrayList<ClientModel> clients;
+    protected ArrayList<Integer> services;
+    
+    protected ArrayList<MessageModel> messages;
+    
+    protected int id;
+    protected String name;
+    protected int location;
+    
+    protected InputReader thread;
+    protected RefreshThread refreshThread;
+    protected boolean connected;
+    
+    protected TwoPlayerGameController gameController = null; 
+    
     public static void main(String [] args) {
         JavaClient javaClient = new JavaClient();
     }
@@ -234,40 +256,40 @@ public class JavaClient extends JavaClientHelperMethods{
     public void handleMessage(String string) {
 
 	if(string.indexOf("CON;") == 0) {
-            handleMessageCON(string);
+            MessageHandler.handleMessageCON(string, this);
         }
 	else if(string.indexOf("DCON[") == 0) {
-            handleMessageDCON(string);
+            MessageHandler.handleMessageDCON(string, this);
         }
 	else if(string.indexOf("MSG[") == 0) {
-            handleMessageMSG(string);
+            MessageHandler.handleMessageMSG(string, this);
         }
 	else if(string.indexOf("PMSG[") == 0) {
-            handleMessagePMSG(string);
+            MessageHandler.handleMessagePMSG(string, this);
         }
 	else if(string.indexOf("RMSG[") == 0) {
-            handleMessageRMSG(string);
+            MessageHandler.handleMessageRMSG(string, this);
         }
 	else if(string.indexOf("SMSG;") == 0) {
-            handleMessageSMSG(string);
+            MessageHandler.handleMessageSMSG(string, this);
         }
 	else if(string.indexOf("ID;") == 0) {
-            handleMessageID(string);
+            MessageHandler.handleMessageID(string, this);
         }
 	else if(string.indexOf("ALL;") == 0) {
-            handleMessageALL(string);
+            MessageHandler.handleMessageALL(string, this);
         }
 	else if(string.indexOf("SERV;") == 0) {
-            handleMessageSERV(string);
+            MessageHandler.handleMessageSERV(string, this);
         }
 	else if(string.indexOf("NEW;") == 0) {
             services.add(Integer.parseInt(string.substring(4)));
         }
 	else if(string.indexOf("NAME[") == 0) {
-            handleMessageNAME(string);
+            MessageHandler.handleMessageNAME(string, this);
         }
 	else if(string.indexOf("MOVED[") == 0) {
-            handleMessageMOVED(string);
+            MessageHandler.handleMessageMOVED(string, this);
         }
         // XXX fix?
         if (gameController != null)
@@ -358,6 +380,63 @@ public class JavaClient extends JavaClientHelperMethods{
 		return this.view;
 	}
 
+    //Classes within the class    
+    /** listens for the send button's action and sends a message, if connected
+     *
+     */
+    class SendListener implements ActionListener {
+        public SendListener() {
+
+        }
+
+        public void actionPerformed(ActionEvent event) {
+            String message = view.getSouthPanel().getInputBox().getText();
+            if(message.length() == 0)
+                return;
+
+            view.getSouthPanel().getInputBox().setText("");
+            if(isConnected()) {
+                sendMessage("MSG;"+message);
+            }
+        }
+    }
+
+    /** input reader waits for data from the server and forwards it to the client
+     *
+     */
+    class InputReader extends Thread implements Runnable {
+        public boolean running;
+        public void run() {
+            String line;
+            running = true;
+            try {
+                while(running && (line = reader.readLine()) != null) {
+                    System.out.println("incoming... "+line);
+                    handleMessage(line);
+                }
+            } catch(SocketException ex) {
+                ex.printStackTrace();
+                System.out.println("lost connection to server...");
+            } catch(Exception ex) {
+                ex.printStackTrace();
+                System.out.println("crashed for some other reason, disconnecting...");
+                writer.println("DCON;"+getId());
+                writer.flush();
+            }
+
+            try{
+                sock.close();
+            }catch(IOException e){
+                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            }
+            setConnected(false);
+            view.getOutputBox().setText("");
+            updateClients();
+            changeLocation(-1);
+            System.out.println("quitting, cause thread ended");
+            //System.exit(0);
+        }
+    }
 }
 
 
