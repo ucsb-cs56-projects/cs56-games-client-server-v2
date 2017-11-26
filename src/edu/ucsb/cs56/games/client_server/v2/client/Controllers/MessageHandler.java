@@ -33,18 +33,63 @@ import edu.ucsb.cs56.games.client_server.v2.client.Views.OnlineViewPanel;
 import edu.ucsb.cs56.games.client_server.v2.server.Controllers.ServiceController;
 
 /**
- * This class exists to provide helper methods for handleMessage() from JavaClient to make it more readable. The two classes used to be within JavaClient were also moved here.
+ * This class exists to provide helper methods for handleMessage() from JavaClient to make it more readable.
  *
  * @author Hong Wang
  * @author David Roster
  * @version for CS56, Fall 2017
  */
 
-public class MessageHandler extends JavaClient {  
+public class MessageHandler {  
+   
+     /** handleMessage is passed a string and the client itself from the JavaClient to handle the message.     
+     * @param string the data from the client to handle
+     * @param client the client itself
+     */
+    public static void handleMessage(String string, JavaClient client) {
+
+	if(string.indexOf("CON;") == 0) {
+            handleMessageCON(string, client);
+        }
+	else if(string.indexOf("DCON[") == 0) {
+            handleMessageDCON(string, client);
+        }
+	else if(string.indexOf("MSG[") == 0) {
+            handleMessageMSG(string, client);
+        }
+	else if(string.indexOf("PMSG[") == 0) {
+            handleMessagePMSG(string, client);
+        }
+	else if(string.indexOf("RMSG[") == 0) {
+            handleMessageRMSG(string, client);
+        }
+	else if(string.indexOf("SMSG;") == 0) {
+            handleMessageSMSG(string, client);
+        }
+	else if(string.indexOf("ID;") == 0) {
+            handleMessageID(string, client);
+        }
+	else if(string.indexOf("ALL;") == 0) {
+            handleMessageALL(string, client);
+        }
+	else if(string.indexOf("SERV;") == 0) {
+            handleMessageSERV(string, client);
+        }
+	else if(string.indexOf("NEW;") == 0) {
+            client.services.add(Integer.parseInt(string.substring(4)));
+        }
+	else if(string.indexOf("NAME[") == 0) {
+            handleMessageNAME(string, client);
+        }
+	else if(string.indexOf("MOVED[") == 0) {
+            handleMessageMOVED(string, client);
+        }
+    }
+
     /**
  *Handle the message for connection.
  */
-    public static void handleMessageCON(String string, JavaClient client){
+    private static void handleMessageCON(String string, JavaClient client){
 	int pid = Integer.parseInt(string.substring(4));
             System.out.println("Client "+pid+" has connected");
             while(client.getClients().size() <= pid)
@@ -61,7 +106,7 @@ public class MessageHandler extends JavaClient {
     /**
  *Handle the message for disconnection.
  */
-    public static void handleMessageDCON(String string, JavaClient client){
+    private static void handleMessageDCON(String string, JavaClient client){
 	String[] data = string.substring(5).split("]");
             int pid = Integer.parseInt(data[0]);
             System.out.println("Client " + pid + " has disconnected: " + data[1]);
@@ -78,7 +123,7 @@ public class MessageHandler extends JavaClient {
     /**
  *Handle the message for public messages.
  */
-    public static void handleMessageMSG(String string, JavaClient client){
+    private static void handleMessageMSG(String string, JavaClient client){
          String[] data = string.substring(4).split("]");
             int pid = Integer.parseInt(data[0]);
             if(client.getClients().size() <= pid || client.getClients().get(pid) == null)
@@ -94,7 +139,7 @@ public class MessageHandler extends JavaClient {
     /**
  *Handle the message for private messages.
  */
-    public static void handleMessagePMSG(String string, JavaClient client){
+    private static void handleMessagePMSG(String string, JavaClient client){
 	 String[] data = string.substring(5).split("]");
             int pid = Integer.parseInt(data[0]);
             String msg = string.substring(5+data[0].length()+1);
@@ -108,7 +153,7 @@ public class MessageHandler extends JavaClient {
     /**
  *Handle the message for receiving messages.
  */
-    public static void handleMessageRMSG(String string, JavaClient client){
+    private static void handleMessageRMSG(String string, JavaClient client){
 	String[] data = string.substring(5).split("]");
             int pid = Integer.parseInt(data[0]);
             String msg = string.substring(5+data[0].length()+1);
@@ -121,7 +166,7 @@ public class MessageHandler extends JavaClient {
     /**
  *Handle the message for sending messages.
  */
-    public static void handleMessageSMSG(String string, JavaClient client){
+    private static void handleMessageSMSG(String string, JavaClient client){
 	String msg = string.substring(5);
             if(msg != null && msg.length() > 0) {
                 client.messages.add(new MessageModel(msg,"Server",true,false));
@@ -132,7 +177,7 @@ public class MessageHandler extends JavaClient {
     /**
  *Handle the message for ID.
  */
-    public static void handleMessageID(String string, JavaClient client){
+    private static void handleMessageID(String string, JavaClient client){
 	client.setId(Integer.parseInt(string.substring(3)));
             if(client.name == null)
                 client.name = "User"+client.getId();
@@ -146,7 +191,7 @@ public class MessageHandler extends JavaClient {
     /**
  *Handle the message for all.
  */
-    public static void handleMessageALL(String string, JavaClient client){
+    private static void handleMessageALL(String string, JavaClient client){
 	String[] connected = string.substring(4).split(";");
             for(int i=0;i<connected.length;i++) {
                 String[] info = connected[i].split(",");
@@ -171,7 +216,7 @@ public class MessageHandler extends JavaClient {
     /**
  *Handle the message for services.
  */
-    public static void handleMessageSERV(String string, JavaClient client){
+    private static void handleMessageSERV(String string, JavaClient client){
 	String[] serv = string.substring(5).split(",");
             for(int i=0;i<serv.length;i++) {
                 if(client.services.size() <= i)
@@ -185,7 +230,7 @@ public class MessageHandler extends JavaClient {
     /**
  *Handle the message for names.
  */
-    public static void handleMessageNAME(String string, JavaClient client){
+    private static void handleMessageNAME(String string, JavaClient client){
 	String[] data = string.substring(5).split("]");
             int pid = Integer.parseInt(data[0]);
             String pname = data[1];
@@ -204,7 +249,7 @@ public class MessageHandler extends JavaClient {
     /**
  *Handle the message for moving location.
  */
-    public static void handleMessageMOVED(String string, JavaClient client){
+    private static void handleMessageMOVED(String string, JavaClient client){
 	String[] data = string.substring(6).split("]");
             int pid = Integer.parseInt(data[0]);
             client.getClients().get(pid).setLocation(Integer.parseInt(data[1]));

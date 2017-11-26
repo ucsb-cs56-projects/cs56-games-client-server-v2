@@ -254,44 +254,7 @@ public class JavaClient{
      * @param string the data from the server to handle
      */
     public void handleMessage(String string) {
-
-	if(string.indexOf("CON;") == 0) {
-            MessageHandler.handleMessageCON(string, this);
-        }
-	else if(string.indexOf("DCON[") == 0) {
-            MessageHandler.handleMessageDCON(string, this);
-        }
-	else if(string.indexOf("MSG[") == 0) {
-            MessageHandler.handleMessageMSG(string, this);
-        }
-	else if(string.indexOf("PMSG[") == 0) {
-            MessageHandler.handleMessagePMSG(string, this);
-        }
-	else if(string.indexOf("RMSG[") == 0) {
-            MessageHandler.handleMessageRMSG(string, this);
-        }
-	else if(string.indexOf("SMSG;") == 0) {
-            MessageHandler.handleMessageSMSG(string, this);
-        }
-	else if(string.indexOf("ID;") == 0) {
-            MessageHandler.handleMessageID(string, this);
-        }
-	else if(string.indexOf("ALL;") == 0) {
-            MessageHandler.handleMessageALL(string, this);
-        }
-	else if(string.indexOf("SERV;") == 0) {
-            MessageHandler.handleMessageSERV(string, this);
-        }
-	else if(string.indexOf("NEW;") == 0) {
-            services.add(Integer.parseInt(string.substring(4)));
-        }
-	else if(string.indexOf("NAME[") == 0) {
-            MessageHandler.handleMessageNAME(string, this);
-        }
-	else if(string.indexOf("MOVED[") == 0) {
-            MessageHandler.handleMessageMOVED(string, this);
-        }
-        // XXX fix?
+	MessageHandler.handleMessage(string, this);       
         if (gameController != null)
         	gameController.handleMessage(string);
     }
