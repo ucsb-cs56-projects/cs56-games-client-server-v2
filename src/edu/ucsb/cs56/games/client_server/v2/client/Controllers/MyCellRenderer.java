@@ -32,21 +32,17 @@ import edu.ucsb.cs56.games.client_server.v2.client.Views.OfflineViewPanel;
 import edu.ucsb.cs56.games.client_server.v2.client.Views.OnlineViewPanel;
 import edu.ucsb.cs56.games.client_server.v2.server.Controllers.ServiceController;
 
-/**
- * These two classes used to be in JavaClient.java, but they were moved into this file for better readability since they are parallel to JavaClient class.
+/** Renders usernames with bold or italics;
+ * useful when a user is in another location
+ * or to highlight the client's username.
+ * This class used to be in JavaClient.java, but it was moved into this file for better readability since it was parallel to JavaClient class.
  *
  * @author Hong Wang
  * @author David Roster
  * @version for CS56, Fall 2017
  */
 
-/** renders usernames with bold or italics
- * useful when a user is in another location
- * or to highlight the client's username
- */
-
-public class JavaClientHelperClasses {
-    public static class MyCellRenderer extends DefaultListCellRenderer {
+public class MyCellRenderer extends DefaultListCellRenderer {
 
     public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
         Component c = super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
@@ -61,38 +57,4 @@ public class JavaClientHelperClasses {
         }
         return c;
     }
-}
-
-/**
- * refresh thread constantly repaints the application
- */
-    public static class RefreshThread extends Thread implements Runnable {
-    public boolean running;
-    JavaClient javaClient;
-    public RefreshThread(JavaClient client) {
-        running = false;
-        javaClient = client;
-    }
-
-    public void run() {
-        running = true;
-        while(running) {
-            //javaClient.update();
-            SwingUtilities.invokeLater(
-                    new Runnable() {
-                        public void run() {
-                            javaClient.getView().getCanvas().repaint();
-                        }
-                    }
-            );
-            try {
-                Thread.sleep(50);
-            } catch(InterruptedException e) {
-                e.printStackTrace();
-                System.out.println("refresh thread broke");
-            }
-        }
-    }
-}
-
 }

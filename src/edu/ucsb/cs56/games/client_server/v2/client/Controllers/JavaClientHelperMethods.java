@@ -58,7 +58,7 @@ public abstract class JavaClientHelperMethods {
     protected int location;
     
     protected InputReader thread;
-    protected JavaClientHelperClasses.RefreshThread refreshThread;
+    protected RefreshThread refreshThread;
     protected boolean connected;
     
     protected TwoPlayerGameController gameController = null;
