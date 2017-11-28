@@ -17,11 +17,7 @@ import edu.ucsb.cs56.games.client_server.v2.games.ServerControllers.TicTacToeCon
 import edu.ucsb.cs56.games.client_server.v2.server.Views.ServerViewPanel;
 
 /**
- * JavaServer is the main server-side application, can be run without gui by using a port number as a single argument
- * on the command line. keeps track of clients connected and broadcasts data to one or multiple clients by setting up
- * clientconnect objects for each of them and keeping a list of users connected.
- * clientconnect handles server-related input from users and, if necessary, can query the server to find users by name
- * or an available, open game service
+ * This abstract class stores the most basic methods(mostly getters and setters) and MainThread class for JavaClient.
  *
  * @author David Roster
  * @author Harrison Wang
