@@ -18,6 +18,7 @@ import edu.ucsb.cs56.games.client_server.v2.server.Controllers.LobbyController;
 import edu.ucsb.cs56.games.client_server.v2.server.Controllers.ServiceController;
 import edu.ucsb.cs56.games.client_server.v2.games.ServerControllers.TicTacToeController;
 import edu.ucsb.cs56.games.client_server.v2.server.Views.ServerViewPanel;
+import edu.ucsb.cs56.games.client_server.v2.games.ServerControllers.GomokuController;
 
 /**
  * JavaServer is the main server-side application, can be run without gui by using a port number as a single argument
@@ -175,9 +176,11 @@ public class JavaServer extends JavaServerTemplate{
         // XXX fix later
         else if(serviceType == 1)
             service = new TicTacToeController(serviceID, this);
-        /*
+        
         else if(serviceType == 2)
-            service = new GomokuController(serviceID);
+            service = new GomokuController(serviceID, this);
+	//originally only had serviceID param
+	/*
         else if(serviceType == 3)
             service = new ChessController(serviceID);*/
 

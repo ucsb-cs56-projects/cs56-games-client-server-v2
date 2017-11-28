@@ -31,6 +31,7 @@ import edu.ucsb.cs56.games.client_server.v2.client.Views.ClientViewPanel;
 import edu.ucsb.cs56.games.client_server.v2.client.Views.OfflineViewPanel;
 import edu.ucsb.cs56.games.client_server.v2.client.Views.OnlineViewPanel;
 import edu.ucsb.cs56.games.client_server.v2.server.Controllers.ServiceController;
+import edu.ucsb.cs56.games.client_server.v2.games.ClientControllers.GomokuController;
 
 /**
  * JavaClient is the main runnable client-side application, it allows users to connect to a server on a specific port
@@ -290,8 +291,13 @@ public class JavaClient{
             	gameController = new TicTacToeController(this);
                 view.setCanvasRef(((TicTacToeController)gameController).getView());
             }
-            /*else if(serviceType == 2)
-                canvasRef = new GomokuViewPanel();
+            else if(serviceType == 2){
+		gameController = new GomokuController(this);
+                view.setCanvasRef(((GomokuController)gameController).getView());
+		// CanvasRef = new GomokuViewPanel();
+	    //hopefully this works
+	    }
+	    /*
             else if(serviceType == 3)
                 canvasRef = new ChessViewPanel();*/
         }
