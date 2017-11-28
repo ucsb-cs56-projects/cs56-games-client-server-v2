@@ -6,6 +6,8 @@ import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
+import edu.ucsb.cs56.games.client_server.v2.games.Views.GameViewPanel;
+
 /**
  * Chat panel used in client
  * 

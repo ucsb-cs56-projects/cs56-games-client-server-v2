@@ -7,6 +7,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 
+import edu.ucsb.cs56.games.client_server.v2.games.Views.GameViewPanel;
+
 /**
  * The lobby panel is a panel which displays currently available games which, when clicked on, will take the user to a
  * new or in-progress copy of that game. Soon, buttons will take players to instruction screens where they can choose

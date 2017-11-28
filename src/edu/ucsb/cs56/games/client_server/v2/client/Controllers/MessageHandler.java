@@ -23,8 +23,8 @@ import javax.swing.JList;
 import javax.swing.SwingUtilities;
 
 import edu.ucsb.cs56.games.client_server.v2.client.Models.ClientModel;
-import edu.ucsb.cs56.games.client_server.v2.client.Controllers.TicTacToeController;
-import edu.ucsb.cs56.games.client_server.v2.client.Controllers.TwoPlayerGameController;
+import edu.ucsb.cs56.games.client_server.v2.games.ClientControllers.TicTacToeController;
+import edu.ucsb.cs56.games.client_server.v2.games.ClientControllers.TwoPlayerGameController;
 import edu.ucsb.cs56.games.client_server.v2.client.Models.MessageModel;
 import edu.ucsb.cs56.games.client_server.v2.client.Models.UsernameModel;
 import edu.ucsb.cs56.games.client_server.v2.client.Views.ClientViewPanel;

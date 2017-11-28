@@ -5,6 +5,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 
+import edu.ucsb.cs56.games.client_server.v2.games.Views.GameViewPanel;
+
 /**
  * offline panel provides two textfields for IP address and port, and a connect button
  * if the ip and port combination are invalid, it'll stall for a few seconds while it times out

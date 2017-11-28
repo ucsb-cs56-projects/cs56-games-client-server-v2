@@ -16,7 +16,7 @@ import java.util.ArrayList;
 import edu.ucsb.cs56.games.client_server.v2.server.Controllers.ClientNetworkController;
 import edu.ucsb.cs56.games.client_server.v2.server.Controllers.LobbyController;
 import edu.ucsb.cs56.games.client_server.v2.server.Controllers.ServiceController;
-import edu.ucsb.cs56.games.client_server.v2.server.Controllers.TicTacToeController;
+import edu.ucsb.cs56.games.client_server.v2.games.ServerControllers.TicTacToeController;
 import edu.ucsb.cs56.games.client_server.v2.server.Views.ServerViewPanel;
 
 /**

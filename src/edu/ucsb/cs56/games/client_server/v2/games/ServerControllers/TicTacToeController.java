@@ -2,7 +2,7 @@ package edu.ucsb.cs56.games.client_server.v2.games.ServerControllers;
 
 import edu.ucsb.cs56.games.client_server.v2.server.Controllers.JavaServer;
 import edu.ucsb.cs56.games.client_server.v2.server.Controllers.ClientNetworkController;
-import edu.ucsb.cs56.games.client_server.v2.server.Models.TicTacToeModel;
+import edu.ucsb.cs56.games.client_server.v2.games.Models.TicTacToeModel;
 
 /**
  * Tictactoeservice allows clientconnect to communicate with tictactoe game
