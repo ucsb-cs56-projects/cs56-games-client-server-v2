@@ -83,16 +83,7 @@ public class TicTacToeController extends TwoPlayerGameController {
         else if(string.indexOf("SPEC;") == 0)
             specClient(client);
         else if(string.indexOf("MSG;") == 0) {
-            String message = string.substring(4);
-            if(message.indexOf("/play")==0) {
-                playClient(client);
-            } else if(message.indexOf("/spec") == 0) {
-                specClient(client);
-            } else if(message.indexOf("/newgame") == 0) {
-                if(client == player1 || client == player2)
-                      init();
-            } else
-                super.handleData(client, string);
+            handleDataMSG(client, string);
         }
 
         if(!gameStarted)
@@ -103,7 +94,25 @@ public class TicTacToeController extends TwoPlayerGameController {
         if(gameData.turn == 2 && client != player2)
             return;
         if(string.indexOf("MOVE;") == 0) {
-            if(gameData.winner != 0)
+            handleDataMOVE(client, string);
+        }
+    }
+
+    private void handleDataMSG(ClientNetworkController client, String string) {
+	String message = string.substring(4);
+            if(message.indexOf("/play")==0) {
+                playClient(client);
+            } else if(message.indexOf("/spec") == 0) {
+                specClient(client);
+            } else if(message.indexOf("/newgame") == 0) {
+                if(client == player1 || client == player2)
+                      init();
+            } else
+                super.handleData(client, string);
+    }
+
+    private void handleDataMOVE(ClientNetworkController client, String string) {
+	if(gameData.winner != 0)
                 return;
             System.out.println("got move command from "+client.client.getId()+": "+string);
             String[] data = string.substring(5).split(",");
@@ -118,8 +127,8 @@ public class TicTacToeController extends TwoPlayerGameController {
             if(gameData.checkWinner())
                 broadcastData("WINNER;"+gameData.winner);
             gameData.turn = 3-gameData.turn;
-        }
     }
+    
     /**
      *Broadcasts our gamedata 
      */
