@@ -79,7 +79,7 @@ public void init() {
      */
     class GomokuCanvas extends JPanel implements MouseListener {
         /**
-         *Colors in our Gomoku and creates ready states that draw in each user's move into the boarditself with an X or O. This also deals with which player whens and loses.
+         *Colors in our Gomoku and creates ready states that draw in each user's move into the board itself with a white or brown player piece. This also deals with which player whens and loses.
          */
         @Override
         public void paintComponent(Graphics g) {

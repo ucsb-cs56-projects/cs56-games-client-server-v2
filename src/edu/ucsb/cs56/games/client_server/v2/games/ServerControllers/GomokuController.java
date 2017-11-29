@@ -5,7 +5,7 @@ import edu.ucsb.cs56.games.client_server.v2.server.Controllers.ClientNetworkCont
 import edu.ucsb.cs56.games.client_server.v2.games.Models.GomokuModel;
 
 /**
- * Gomokuservice allows clientconnect to communicate with chess game
+ * Gomokuservice allows clientconnect to communicate with gomoku game
  *
  * @author David Roster
  * @author Harrison Wang

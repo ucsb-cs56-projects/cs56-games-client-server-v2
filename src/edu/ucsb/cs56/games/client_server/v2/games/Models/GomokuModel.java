@@ -174,7 +174,7 @@ public class GomokuModel implements TwoPlayerGameModel {
     }
     
         /**
-     *Parses our incoming string into an array and defines the new state of our Tic Tac Toe grid.
+     *Parses our incoming string into an array and defines the new state of our Gomoku grid.
      */
     public void setState(String data) {
         String[] info = data.substring(6).split("]");
