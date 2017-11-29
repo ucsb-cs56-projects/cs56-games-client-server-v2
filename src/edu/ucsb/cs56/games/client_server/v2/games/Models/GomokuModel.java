@@ -22,6 +22,8 @@ package edu.ucsb.cs56.games.client_server.v2.games.Models;
 
 import edu.ucsb.cs56.games.client_server.v2.client.Models.ClientModel;
 
+import java.lang.Math;
+
 
 /**
  * gomokugame is a gomoku game object that stores data about a gomoku game, such as placement of Xs and Os,
@@ -37,6 +39,8 @@ public class GomokuModel implements TwoPlayerGameModel {
     public int[][] grid;
     public int turn;
     public int winner;
+    private int lastrow;
+    private int lastcol;
 
     public GomokuModel() {
         init();
@@ -52,37 +56,123 @@ public class GomokuModel implements TwoPlayerGameModel {
 
         turn = 1;
         winner = 0;
+	lastrow = 0;
+	lastcol = 0;
     }
+
+    
 /**
  *Checks to see who won by comparing three of a pattern whether diagonal, vertical, or horizontal. Only returns true/false since this is a helper method but can print "no winner found" if the game is still contuing.
  */
-public boolean checkWinner() {
-	//FIND BETTER ALGORITHM FOR CHECKING WINNER, DOESNT NECCESARILY NEED TO GO BY 3X3 OR 10X10
-       /* for(int j=1;j<3;j++) {
-            for(int i=0;i<3;i++) {
-                if(grid[0][i] == j && grid[1][i] == j && grid[2][i] == j) {
-                    winner = j;
-                    return true;
-                }
-                if(grid[i][0] == j && grid[i][1] == j && grid[i][2] == j) {
-                    winner = j;
-                    return true;
-                }
-            }
-            if(grid[0][0] == j && grid[1][1] == j && grid[2][2] == j) {
-                winner = j;
-                return true;
-            }
-            if(grid[0][2] == j && grid[1][1] == j && grid[2][0] == j) {
-                winner = j;
-                return true;
-            }
-        }
+    public boolean checkWinner() {
+	int row = lastrow;
+	int col = lastcol;
+	int player = grid[row][col];
+	if (player==0) {
+	    System.out.println("no winner found");
+	    return false;
+	}
+	int count =0;
+	//Checks vertical direction for win
+	for(int i=0; i<10; i++)
+	    {
+		if(grid[i][col] == player)
+		    count++;
+		else
+		    count = 0;
+		if (count >=5) {
+		    winner = player;
+		    return true;
+		}
+	    }
+	count = 0;
+	//checks Horizontal direction for win
+	 for(int i=0; i<10; i++)
+	    {
+		if(grid[row][i] == player)
+		    count++;
+		else
+		    count = 0;
+		if (count >=5) {
+		    winner = player;
+		    return true;
+		}
+	    }
+	count = 0;
+	//Now check for diagonal (1,1) from player's piece position
+	int min = Math.min(col, row);
+	int dif;
+	if (min == row) {
+	    dif = col-row;
+	    for(int i=0; i<=min; i++)
+	    {
+		if(grid[i][i+dif] == player)
+		    count++;
+		else
+		    count = 0;
+		if (count >=5) {
+		    winner = player;
+		    return true;
+		}
+	    }
+	}
+	else {
+	    dif = row - col;
+	    for(int i=0; i<=min; i++)
+	    {
+		if(grid[i+dif][i] == player)
+		    count++;
+		else
+		    count = 0;
+		if (count >=5) {
+		    winner = player;
+		    return true;
+		}
+	    }
+	}
+	count = 0;
+
+	//check for diagonal (1,-1) from player's piece position
+	int sum = col + row;
+	if (sum >= 9) {
+	    for(int i=sum-9; i<=9; i++)
+	    {
+		if(grid[sum-i][i] == player)
+		    count++;
+		else
+		    count = 0;
+		if (count >=5) {
+		    winner = player;
+		    return true;
+		}
+	    }
+	}
+	else {
+	    for(int i=0; i<=sum; i++)
+	    {
+		if(grid[sum-i][i] == player)
+		    count++;
+		else
+		    count = 0;
+		if (count >=5) {
+		    winner = player;
+		    return true;
+		}
+	    }
+	}
+		
         System.out.println("no winner found");
-        return false;
-	*/
 	return false;
     }
+
+    public void setLastRow(int a) {
+	lastrow = a;
+    }
+
+    public void setLastCol(int a) {
+	lastcol = a;
+    }
+    
         /**
      *Parses our incoming string into an array and defines the new state of our Tic Tac Toe grid.
      */

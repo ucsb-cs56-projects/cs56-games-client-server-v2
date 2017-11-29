@@ -121,6 +121,8 @@ public class GomokuController extends TwoPlayerGameController {
                 return;
 
             gameData.grid[Y][X] = gameData.turn;
+	    gameData.setLastRow(Y);
+	    gameData.setLastCol(X);
             broadcastData("MOVE[" + gameData.turn + "]" + X + "," + Y);
             if(gameData.checkWinner())
                 broadcastData("WINNER;"+gameData.winner);
