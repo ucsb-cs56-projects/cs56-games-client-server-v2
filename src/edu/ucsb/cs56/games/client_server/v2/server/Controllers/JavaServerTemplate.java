@@ -17,7 +17,8 @@ import edu.ucsb.cs56.games.client_server.v2.games.ServerControllers.TicTacToeCon
 import edu.ucsb.cs56.games.client_server.v2.server.Views.ServerViewPanel;
 
 /**
- * This abstract class stores the most basic methods(mostly getters and setters) and MainThread class for JavaClient.
+ * This abstract class stores the most basic methods(mostly getters and setters) and MainThread class for JavaServer. 
+ *All global variables are declared here as well.
  *
  * @author David Roster
  * @author Harrison Wang
