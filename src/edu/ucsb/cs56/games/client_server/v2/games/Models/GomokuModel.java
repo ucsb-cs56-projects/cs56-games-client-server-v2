@@ -26,7 +26,7 @@ import java.lang.Math;
 
 
 /**
- * gomokugame is a gomoku game object that stores data about a gomoku game, such as placement of Xs and Os,
+ * gomokugame is a gomoku game object that stores data about a gomoku game, such as placement of Xste and brown user pieces,
  * and possibly the winner
  *
  * @author David Roster
@@ -62,7 +62,7 @@ public class GomokuModel implements TwoPlayerGameModel {
 
     
 /**
- *Checks to see who won by comparing three of a pattern whether diagonal, vertical, or horizontal. Only returns true/false since this is a helper method but can print "no winner found" if the game is still contuing.
+ *Checks to see who won by comparing five of a pattern whether diagonal, vertical, or horizontal. Only returns true/false since this is a helper method but can print "no winner found" if the game is still contuing.
  */
     public boolean checkWinner() {
 	int row = lastrow;
