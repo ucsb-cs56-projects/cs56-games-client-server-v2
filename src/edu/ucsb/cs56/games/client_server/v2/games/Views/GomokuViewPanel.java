@@ -124,17 +124,18 @@ public void init() {
                         continue;
 
                     if(pid == 1) {
-                        g2d.setColor(Color.RED);
-                        GeneralPath path = new GeneralPath();
-                        path.moveTo(offsetX + j * gridSize + 3*margin, offsetY + i * gridSize + 3*margin);
-                        path.lineTo(offsetX+(j+1)*gridSize - 3*margin, offsetY+(i+1)*gridSize - 3*margin);
-                        path.moveTo(offsetX+(j+1)*gridSize - 3*margin, offsetY + i * gridSize + 3*margin);
-                        path.lineTo(offsetX + j * gridSize + 3*margin, offsetY+(i+1)*gridSize - 3*margin);
-                        g2d.draw(path);
+			//black chess for player 1
+                        g.setColor(Color.BLACK);
+			g.drawOval( offsetX + j * gridSize + 3*margin, offsetY + i * gridSize + 3*margin, gridSize - 6*margin, gridSize - 6*margin);
+                        g.fillOval( offsetX + j * gridSize + 3*margin, offsetY + i * gridSize + 3*margin, gridSize - 6*margin, gridSize - 6*margin);
+			
+                     
                     } else {
-                        g.setColor(Color.BLUE);
-                        g.drawOval( offsetX + j * gridSize + 3*margin, offsetY + i * gridSize + 3*margin,
-                                gridSize - 6*margin, gridSize - 6*margin);
+			//white chess for player 2
+                        g.setColor(Color.BLACK);
+                        g.drawOval( offsetX + j * gridSize + 3*margin, offsetY + i * gridSize + 3*margin, gridSize - 6*margin, gridSize - 6*margin);
+			g.setColor(Color.WHITE);
+			g.fillOval( offsetX + j * gridSize + 3*margin, offsetY + i * gridSize + 3*margin, gridSize - 6*margin, gridSize - 6*margin);
                     }
 
                 }
@@ -143,22 +144,20 @@ g2d.setStroke(new BasicStroke(2));
             String readyState = "";
             if(player1 != null) {
 		    //Shows up indicating turn with matching symbol
-                g.setColor(Color.red);
+                g.setColor(Color.BLACK);
                 g.drawString("Player 1: " + player1.getName(), offsetX, 15);
-                GeneralPath path = new GeneralPath();
-                path.moveTo(offsetX-23,offsetY-38);
-                path.lineTo(offsetX-7, offsetY-22);
-                path.moveTo(offsetX-7,offsetY-38);
-                path.lineTo(offsetX-23, offsetY-22);
-                g2d.draw(path);
+		g.drawOval( offsetX -23, offsetY - 38, 16, 16);
+                g.fillOval( offsetX -23, offsetY - 38, 16, 16);
+                
             } else
                 readyState = "waiting for players";
             if(player2 != null) {
 		    //player 2 name and symbol
-                g.setColor(Color.blue);
+                g.setColor(Color.BLACK);
                 g.drawString("Player 2: "+ player2.getName(),offsetX,35);
-                g.drawOval( offsetX -23, offsetY - 18,
-                        16, 16);
+		g.drawOval( offsetX -23, offsetY - 18, 16, 16);
+		g.setColor(Color.WHITE);
+                g.fillOval( offsetX -23, offsetY - 18, 16, 16);
             } else
                 readyState = "waiting for players";
 
@@ -192,8 +191,8 @@ g2d.setStroke(new BasicStroke(2));
             int mY = mouseEvent.getY();
             int dX = mX-offsetX;
             int dY = mY-offsetY;
-            int cellX = (dX*3/panelSize);
-            int cellY = (dY*3/panelSize);
+            int cellX = (dX*10/panelSize);
+            int cellY = (dY*10/panelSize);
             System.out.println(mX+", "+mY+", "+dX+", "+dY+", "+cellX+", "+cellY);
             if(cellX >= 0 && cellX < 3 && cellY >= 0 && cellY < 3) {
                 controller.getClient().sendMessage("MOVE;" + cellX + "," + cellY);
