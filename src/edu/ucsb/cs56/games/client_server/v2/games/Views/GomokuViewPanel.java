@@ -108,11 +108,10 @@ public void init() {
                 return;
 
             g.setColor(new Color(0xda6d0e));//changed from 0x333333
-            g.fillRect(offsetX+gridSize-margin,offsetY, margin*2, gridSize*3);
-            g.fillRect(offsetX+gridSize*2-margin,offsetY, margin*2, gridSize*3);
-            g.fillRect(offsetX,offsetY+gridSize-margin, gridSize*3, margin*2);
-            g.fillRect(offsetX,offsetY+gridSize*2-margin, gridSize*3, margin*2);
-
+	    for (int i=0; i<=10; i++){
+		g.fillRect(offsetX+gridSize*i-margin,offsetY, margin*2, gridSize*10);
+		g.fillRect(offsetX,offsetY+gridSize*i-margin, gridSize*10, margin*2);
+	    }
 
             Graphics2D g2d = (Graphics2D)g;
             g2d.setStroke(new BasicStroke(5));
@@ -194,7 +193,7 @@ g2d.setStroke(new BasicStroke(2));
             int cellX = (dX*10/panelSize);
             int cellY = (dY*10/panelSize);
             System.out.println(mX+", "+mY+", "+dX+", "+dY+", "+cellX+", "+cellY);
-            if(cellX >= 0 && cellX < 3 && cellY >= 0 && cellY < 3) {
+            if(cellX >= 0 && cellX < 10 && cellY >= 0 && cellY < 10) {
                 controller.getClient().sendMessage("MOVE;" + cellX + "," + cellY);
             }
         }//closes overriden method
