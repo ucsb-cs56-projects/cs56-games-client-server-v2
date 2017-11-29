@@ -104,7 +104,7 @@ public class GomokuModel implements TwoPlayerGameModel {
 	int dif;
 	if (min == row) {
 	    dif = col-row;
-	    for(int i=0; i<=min; i++)
+	    for(int i=0; i<=9-dif; i++)
 	    {
 		if(grid[i][i+dif] == player)
 		    count++;
@@ -118,7 +118,7 @@ public class GomokuModel implements TwoPlayerGameModel {
 	}
 	else {
 	    dif = row - col;
-	    for(int i=0; i<=min; i++)
+	    for(int i=0; i<=9-dif; i++)
 	    {
 		if(grid[i+dif][i] == player)
 		    count++;
