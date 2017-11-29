@@ -85,9 +85,9 @@ public class GomokuController extends TwoPlayerGameController {
         else if(string.indexOf("STATE[") == 0) {
                 String[] info = string.substring(6).split("]");
                 String[] rows = info[1].split(";");
-            for(int i=0;i<3;i++) {
+            for(int i=0;i<10;i++) {
                 String[] cols = rows[i].split(",");
-                for(int j=0;j<3;j++) {
+                for(int j=0;j<10;j++) {
                     view.setGridSpot(i, j, Integer.parseInt(cols[j]));
                 }
             }

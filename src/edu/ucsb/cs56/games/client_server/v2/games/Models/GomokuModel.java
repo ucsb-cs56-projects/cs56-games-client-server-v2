@@ -45,9 +45,9 @@ public class GomokuModel implements TwoPlayerGameModel {
  *Initializes the state of our grid board for the server. That way the server can also follow the game closely and make announcements off the flow of the game.
  */
     public void init() {
-        grid = new int[3][3];
-        for(int i=0;i<3;i++)
-            for(int j=0;j<3;j++)
+        grid = new int[10][10];
+        for(int i=0;i<10;i++)
+            for(int j=0;j<10;j++)
                 grid[i][j] = 0;
 
         turn = 1;
@@ -57,7 +57,8 @@ public class GomokuModel implements TwoPlayerGameModel {
  *Checks to see who won by comparing three of a pattern whether diagonal, vertical, or horizontal. Only returns true/false since this is a helper method but can print "no winner found" if the game is still contuing.
  */
 public boolean checkWinner() {
-        for(int j=1;j<3;j++) {
+	//FIND BETTER ALGORITHM FOR CHECKING WINNER, DOESNT NECCESARILY NEED TO GO BY 3X3 OR 10X10
+       /* for(int j=1;j<3;j++) {
             for(int i=0;i<3;i++) {
                 if(grid[0][i] == j && grid[1][i] == j && grid[2][i] == j) {
                     winner = j;
@@ -79,6 +80,8 @@ public boolean checkWinner() {
         }
         System.out.println("no winner found");
         return false;
+	*/
+	return false;
     }
         /**
      *Parses our incoming string into an array and defines the new state of our Tic Tac Toe grid.
@@ -93,9 +96,9 @@ public boolean checkWinner() {
             winner = 0;
         }
         String[] rows = info[1].split(";");
-        for(int i=0;i<3;i++) {
+        for(int i=0;i<10;i++) {
             String[] cols = rows[i].split(",");
-            for(int j=0;j<3;j++) {
+            for(int j=0;j<10;j++) {
                 grid[i][j] = Integer.parseInt(cols[j]);
             }
         }
@@ -111,13 +114,13 @@ public boolean checkWinner() {
             state += turn+"]";
         else
             state += "0]";
-        for(int i=0;i<3;i++) {
-            for(int j=0;j<3;j++) {
+        for(int i=0;i<10;i++) {
+            for(int j=0;j<10;j++) {
                 state += grid[i][j];
-                if(j < 2)
+                if(j < 9)
                     state +=",";
             }
-            if(i<2)
+            if(i<9)
                 state += ";";
         }
         return state;

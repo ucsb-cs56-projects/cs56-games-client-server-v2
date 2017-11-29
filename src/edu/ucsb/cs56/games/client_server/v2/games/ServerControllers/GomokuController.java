@@ -12,7 +12,7 @@ import edu.ucsb.cs56.games.client_server.v2.games.Models.GomokuModel;
  * @version for CS56, Spring 2017
  */
 public class GomokuController extends TwoPlayerGameController {
-    public GomokuModel gameData; //public ChessModel gamedata;
+    public GomokuModel gameData;
 
     public ClientNetworkController player1;
     public ClientNetworkController player2;
@@ -22,7 +22,7 @@ public class GomokuController extends TwoPlayerGameController {
     public GomokuController(int ID, JavaServer server) {
         super(ID, server);
         gameData = new GomokuModel();
-        type = 1;
+        type = 2; //lobby=0, tictac=1, so ...Go=2?
         name = "Gomoku";
     }
     /**
@@ -109,6 +109,7 @@ public class GomokuController extends TwoPlayerGameController {
         if(gameData.turn == 2 && client != player2)
             return;
         if(string.indexOf("MOVE;") == 0) {
+		//possinly bracket instead of semi-colon
             if(gameData.winner != 0)
                 return;
             System.out.println("got move command from "+client.client.getId()+": "+string);

@@ -108,7 +108,7 @@ public class ClientNetworkController implements Runnable {
 
         //tell everyone the client has disconnected
         currentService.removeClient(this);
-        System.out.println(closed+" well at least this got called...*clientnetworkconhtroller*");
+        System.out.println(closed+"// well at least this got called...*clientnetworkconhtroller*);
         synchronized (JavaServer.clients) {
             JavaServer.clients.set(client.getId(), null);
             if(client.getId() == JavaServer.clients.size()-1){

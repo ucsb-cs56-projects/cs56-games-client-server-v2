@@ -50,9 +50,9 @@ public class GomokuViewPanel extends TwoPlayerGameViewPanel {
         canvas.addMouseListener(canvas);
         add(BorderLayout.CENTER, canvas);
 
-        grid = new int[3][3];
-        for (int i = 0; i < 3; ++i) {
-                for (int j = 0; j < 3; ++j) {
+        grid = new int[10][10];
+        for (int i = 0; i < 10; ++i) {
+                for (int j = 0; j < 10; ++j) {
                         grid[i][j] = 0;
                 }
         }
@@ -63,8 +63,8 @@ public class GomokuViewPanel extends TwoPlayerGameViewPanel {
 
 public void init() {
         // This is redundant, will probably remove
-        for (int i = 0; i < 3; ++i) {
-                for (int j = 0; j < 3; ++j) {
+        for (int i = 0; i < 10; ++i) {
+                for (int j = 0; j < 10; ++j) {
                         grid[i][j] = 0;
                 }
         }
@@ -100,14 +100,14 @@ public void init() {
                 offsetY = (gridHeight-panelSize)/2+topMargin;
             }
 
-            gridSize = panelSize/3;
+            gridSize = panelSize/10;//makes a each little box
 
             g.setColor(Color.white);
             g.fillRect(0,0,getWidth(),getHeight());
             if(!controller.getClient().isConnected() || controller.getClient().getClients() == null)
                 return;
 
-            g.setColor(new Color(0x333333));
+            g.setColor(new Color(0xda6d0e));//changed from 0x333333
             g.fillRect(offsetX+gridSize-margin,offsetY, margin*2, gridSize*3);
             g.fillRect(offsetX+gridSize*2-margin,offsetY, margin*2, gridSize*3);
             g.fillRect(offsetX,offsetY+gridSize-margin, gridSize*3, margin*2);
@@ -117,8 +117,8 @@ public void init() {
             Graphics2D g2d = (Graphics2D)g;
             g2d.setStroke(new BasicStroke(5));
 
-            for(int i=0;i<3;i++) {
-                for(int j=0;j<3;j++) {
+            for(int i=0;i<10;i++) {
+                for(int j=0;j<10;j++) {
                     int pid = grid[i][j];
 		    if(pid == 0)
                         continue;
@@ -142,6 +142,7 @@ public void init() {
 g2d.setStroke(new BasicStroke(2));
             String readyState = "";
             if(player1 != null) {
+		    //Shows up indicating turn with matching symbol
                 g.setColor(Color.red);
                 g.drawString("Player 1: " + player1.getName(), offsetX, 15);
                 GeneralPath path = new GeneralPath();
@@ -153,6 +154,7 @@ g2d.setStroke(new BasicStroke(2));
             } else
                 readyState = "waiting for players";
             if(player2 != null) {
+		    //player 2 name and symbol
                 g.setColor(Color.blue);
                 g.drawString("Player 2: "+ player2.getName(),offsetX,35);
                 g.drawOval( offsetX -23, offsetY - 18,
