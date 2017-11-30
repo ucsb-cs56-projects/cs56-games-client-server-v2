@@ -1,6 +1,6 @@
 cs56-games-client-server
 ========================
-A simple client-server program that allows people to play iconic online games like Tic-tac-toe. Chat and observation functions are included.
+A simple client-server program that allows people to play iconic online games like Tic-tac-toe and Gomoku. Chat and observation functions are included.
 
 How to Run
 ==========
@@ -30,6 +30,11 @@ Since there is a lot of classes some basic commands provided here can help displ
 Breakdown of Basic Repo Names
 =================================
 *Both the main client and server repo's have these sub directories because they keep code cleaner and follow the MVC design pattern. Here's a link that will explain more ... https://www.tutorialspoint.com/design_pattern/mvc_pattern.htm
+
+3 main directories:
+-games -> controls the game function for our application
+-client -> handles the client side 
+-server -> handles server side
 
 Controller -> This stands for Logic which means that most of our logic handling 	functions and raw code are in here... have fun
 
