@@ -2,16 +2,16 @@ package edu.ucsb.cs56.games.client_server.v2.server.Controllers;
 
 import java.util.ArrayList;
 
-import edu.ucsb.cs56.games.client_server.v2.Controllers.JavaServer;
+//import edu.ucsb.cs56.games.client_server.v2.Controllers.JavaServer;
 
 /**
  * Service is an abstract class to be extended by all services
  * a service is the server-side connection between a client and the server's copy of a game,
  * passing data from the client to the game, as delegated by the clientconnect object on the server
  *
- * @author Joseph Colicchio
- * @author Adam Ehrlich
- * @version for CS56, Spring 2013
+ * @author Harrison Wang
+ * @author David Roster
+ * @version for CS56, Spring 2017
  */
 
 public abstract class ServiceController{

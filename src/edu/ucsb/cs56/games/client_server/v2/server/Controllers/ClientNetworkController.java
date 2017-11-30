@@ -6,16 +6,16 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 
-import edu.ucsb.cs56.games.client_server.v2.Controllers.JavaServer;
-import edu.ucsb.cs56.games.client_server.v2.Models.ClientModel;
+//import edu.ucsb.cs56.games.client_server.v2.Controllers.JavaServer;
+import edu.ucsb.cs56.games.client_server.v2.client.Models.ClientModel;
 
 /**
  * Clientconnect is a runnable object representing a connection between the server and a client
  * it provides all functionality for transmitting data to clients and receiving incoming data from them
  *
- * @author Joseph Colicchio
- * @author Adam Ehrlich
- * @version for CS56, Spring 2013
+ * @author David Roster
+ * @author Harrison Wang
+ * @version for CS56, Spring 2017
  */
 
 //server-wide convention for managing cilents connected to server
@@ -108,7 +108,7 @@ public class ClientNetworkController implements Runnable {
 
         //tell everyone the client has disconnected
         currentService.removeClient(this);
-        System.out.println(closed+" well at least this got called...");
+        System.out.println(closed+" well at least this got called...*clientnetworkconhtroller*");
         synchronized (JavaServer.clients) {
             JavaServer.clients.set(client.getId(), null);
             if(client.getId() == JavaServer.clients.size()-1){

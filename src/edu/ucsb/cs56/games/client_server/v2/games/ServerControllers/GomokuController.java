@@ -1,35 +1,40 @@
-package edu.ucsb.cs56.games.client_server.v2.server.Controllers;
+package edu.ucsb.cs56.games.client_server.v2.games.ServerControllers;
 
-import edu.ucsb.cs56.games.client_server.v2.Controllers.JavaServer;
-import edu.ucsb.cs56.games.client_server.v2.server.Models.TicTacToeModel;
+import edu.ucsb.cs56.games.client_server.v2.server.Controllers.JavaServer;
+import edu.ucsb.cs56.games.client_server.v2.server.Controllers.ClientNetworkController;
+import edu.ucsb.cs56.games.client_server.v2.games.Models.GomokuModel;
 
 /**
- * gictactoeservice allows clientconnect to communicate with tictactoe game
+ * Gomokuservice allows clientconnect to communicate with gomoku game
  *
- * @author Joseph Colicchio
- * @author Adam Ehrlich
- * @version for CS56, Spring 2013
+ * @author David Roster
+ * @author Harrison Wang
+ * @version for CS56, Spring 2017
  */
-public class TicTacToeController extends TwoPlayerGameController {
-    public TicTacToeModel gameData;
+public class GomokuController extends TwoPlayerGameController {
+    public GomokuModel gameData;
 
     public ClientNetworkController player1;
     public ClientNetworkController player2;
 
     public boolean gameStarted;
 
-    public TicTacToeController(int ID, JavaServer server) {
+    public GomokuController(int ID, JavaServer server) {
         super(ID, server);
-        gameData = new TicTacToeModel();
-        type = 1;
-        name = "TicTacToe";
+        gameData = new GomokuModel();
+        type = 2; //lobby=0, tictac=1, so ...Go=2?
+        name = "Gomoku";
     }
-    
+    /**
+     *Initializes the Gomoku game to a blank game that's ready to play
+     */
     public void init() {
         gameData.init();
         broadcastData("INIT;");
     }
-
+    /**
+     *Distributes which client is player 1 and 2 by who is connected to the server already. Otherwise, the first to connect is player 1.
+     */
     public void playClient(ClientNetworkController client) {
         if(player1 == null) {
             player1 = client;
@@ -45,6 +50,11 @@ public class TicTacToeController extends TwoPlayerGameController {
         updateAll();
     }
 
+
+
+   /**
+     *Gets passed in a client that was a player who will become a spectator. Each player will loose be shifted downwards when a player client changes. THen updates the list.
+     */
     //if a client was a player, spec him, and then probably stop the game
     public void specClient(ClientNetworkController client) {
         if(player1 != client && player2 != client)
@@ -67,6 +77,11 @@ public class TicTacToeController extends TwoPlayerGameController {
         updateAll();
     }
 
+
+
+    /**
+     *Gets the moves from each player's turn when its their turn. Also handles all incoming information from the flow of game both between players vs spectators.
+     */
     //get move from player, if it's their turn
     public void handleData(ClientNetworkController client, String string) {
         if(string.indexOf("PLAY;") == 0)
@@ -81,7 +96,7 @@ public class TicTacToeController extends TwoPlayerGameController {
                 specClient(client);
             } else if(message.indexOf("/newgame") == 0) {
                 if(client == player1 || client == player2)
-                    init();
+                      init();
             } else
                 super.handleData(client, string);
         }
@@ -94,6 +109,7 @@ public class TicTacToeController extends TwoPlayerGameController {
         if(gameData.turn == 2 && client != player2)
             return;
         if(string.indexOf("MOVE;") == 0) {
+		//possinly bracket instead of semi-colon
             if(gameData.winner != 0)
                 return;
             System.out.println("got move command from "+client.client.getId()+": "+string);
@@ -106,12 +122,21 @@ public class TicTacToeController extends TwoPlayerGameController {
 
             gameData.grid[Y][X] = gameData.turn;
             broadcastData("MOVE[" + gameData.turn + "]" + X + "," + Y);
+	    gameData.setLastRow(Y);
+	    gameData.setLastCol(X);
             if(gameData.checkWinner())
                 broadcastData("WINNER;"+gameData.winner);
             gameData.turn = 3-gameData.turn;
+	    //might have to adjust line above
         }
     }
 
+
+
+
+     /**
+     *Broadcasts our gamedata
+     */
     //this could be done better, just broadcast gameData.getGameState and have that function generate this:
     //wait but that isnt possible
     //sends the state of the game to a player
@@ -135,3 +160,4 @@ public class TicTacToeController extends TwoPlayerGameController {
         }
     }
 }
+

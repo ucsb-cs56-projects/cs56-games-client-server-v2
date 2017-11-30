@@ -4,9 +4,9 @@ package edu.ucsb.cs56.games.client_server.v2.client.Models;
  * A message object for use in javaclient, rendering message history
  * keeps track of user, makes it easy to determine if the text should be bold or italicised, stores more data than a string could
  *
- * @author Joseph Colicchio
- * @author Adam Ehrlich
- * @version for CS56, Spring 2013
+ * @author David Roster
+ * @author Harrison Wang
+ * @version for CS56, Spring 2017
  */
 
 public class MessageModel{
@@ -43,7 +43,13 @@ public class MessageModel{
         else if(message.indexOf("/me ") == 0)
             style=2;
     }
-    
+    /**
+     * We override the toString method for better printing of 
+     * messages incoming and outgoing messages
+     *@param None
+     *PrivateMessage - Font is in bold
+     *OwnMessage - Font is italicized 
+     */
     @Override
     public String toString() {
         String string = "";

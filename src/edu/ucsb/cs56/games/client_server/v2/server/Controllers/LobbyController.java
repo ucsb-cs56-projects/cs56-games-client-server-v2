@@ -1,15 +1,15 @@
 package edu.ucsb.cs56.games.client_server.v2.server.Controllers;//Lobbyservice is a service that newly connecting players join by default
 //it
 
-import edu.ucsb.cs56.games.client_server.v2.Controllers.JavaServer;
+//import edu.ucsb.cs56.games.client_server.v2.Controllers.JavaServer;
 /**
  * Since all clients need an "active service" to be connected to, which listens to input, lobby service is a service that
  * extends chat service and does little else. quite honestly, it doesn't do much else besides extend chatservice, so
  * its existence is largely pointless
  *
- * @author Joseph Colicchio
- * @author Adam Ehrlich
- * @version for CS56, Spring 2013
+ * @author David Roster
+ * @author Harrison Wang
+ * @version for CS56, Spring 2017
  */
 
 public class LobbyController extends ChatController {

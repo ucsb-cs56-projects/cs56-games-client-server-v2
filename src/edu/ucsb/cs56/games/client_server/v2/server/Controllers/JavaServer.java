@@ -1,4 +1,4 @@
-package edu.ucsb.cs56.games.client_server.v2.Controllers;
+package edu.ucsb.cs56.games.client_server.v2.server.Controllers;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -16,8 +16,9 @@ import java.util.ArrayList;
 import edu.ucsb.cs56.games.client_server.v2.server.Controllers.ClientNetworkController;
 import edu.ucsb.cs56.games.client_server.v2.server.Controllers.LobbyController;
 import edu.ucsb.cs56.games.client_server.v2.server.Controllers.ServiceController;
-import edu.ucsb.cs56.games.client_server.v2.server.Controllers.TicTacToeController;
+import edu.ucsb.cs56.games.client_server.v2.games.ServerControllers.TicTacToeController;
 import edu.ucsb.cs56.games.client_server.v2.server.Views.ServerViewPanel;
+import edu.ucsb.cs56.games.client_server.v2.games.ServerControllers.GomokuController;
 
 /**
  * JavaServer is the main server-side application, can be run without gui by using a port number as a single argument
@@ -26,36 +27,17 @@ import edu.ucsb.cs56.games.client_server.v2.server.Views.ServerViewPanel;
  * clientconnect handles server-related input from users and, if necessary, can query the server to find users by name
  * or an available, open game service
  *
- * @author Joseph Colicchio
- * @author Adam Ehrlich
- * @version for CS56, Spring 2013
+ * @author David Roster
+ * @author Harrison Wang
+ * @version for CS56, Spring 2017
  */
 
 //start a java message server that listens for connections to port X and then connects the client 
-public class JavaServer{
-    //this belongs to the server itself, independent of the chat standards
-    public static ArrayList<ClientNetworkController> clients;
-    public static ArrayList<ServiceController> services;
-    private LobbyController lobby;
-
-    private  boolean running;
-
-    //this could go in either, it's used mostly for the chat
-    private ArrayList<String> bannedList;
-
-    private static final String IP_ADDR = "127.0.0.1"; // localhost
-    private static final int PORT = 12345;
-
-    private boolean connected;
-    private MainThread mainThread;
-    private String runningOn;
-    private int portNum;
-    private boolean nogui;
+public class JavaServer extends JavaServerTemplate{
     
-    private ServerViewPanel view = null;
-    
-    private ActionListener connectActionListener;
-
+    /**
+     *start a java message server that listens for connections to port X 
+     */
     public static void main(String [] args) {
         if(args.length > 0) {
             try {
@@ -119,18 +101,6 @@ public class JavaServer{
             }
     	};                
     	view.getConnectButton().addActionListener(connectActionListener);   
-    }
-
-    /**
-     * update gui with number of clients
-     */
-    public void updateServerGUI() {
-        if(nogui)
-            return;
-        if(running)
-            view.getStatus().setText(runningOn+", "+clients.size()+" user"+(clients.size()!=1?"s":""));
-        else
-            view.getStatus().setText("Offline");
     }
 
     /**
@@ -206,9 +176,11 @@ public class JavaServer{
         // XXX fix later
         else if(serviceType == 1)
             service = new TicTacToeController(serviceID, this);
-        /*
+        
         else if(serviceType == 2)
-            service = new GomokuController(serviceID);
+            service = new GomokuController(serviceID, this);
+	//originally only had serviceID param
+	/*
         else if(serviceType == 3)
             service = new ChessController(serviceID);*/
 
@@ -269,168 +241,6 @@ public class JavaServer{
         return false;
     }
 
-    /** thread to prevent gui from freezing on connect
-     *
-     */
-    class MainThread extends Thread implements Runnable {
-    	JavaServer server;
-        public MainThread(int P, JavaServer server) {
-        	this.server = server;
-            portNum = P;
-        }
-        
-        public void run() {
-            running = true;
-            clients = new ArrayList<ClientNetworkController>();
-            bannedList = new ArrayList<String>();
-
-            services = new ArrayList<ServiceController>();
-            lobby = new LobbyController(0, server);
-            services.add(lobby);
-
-            //clients.add(new edu.ucsb.cs56.W12.jcolicchio.issue535.EchoConnect(clients.size()));
-            //clients.add(new edu.ucsb.cs56.W12.jcolicchio.issue535.ShoutConnect(clients.size()));
-            ServerSocket serverSock = null;
-            Socket sock = null;
-            System.out.println("total users: "+clients.size());
-            try {
-                connected = true;
-                serverSock = new ServerSocket(portNum);
-                
-                while(running) {
-                    //a new client wants to connect
-                    System.out.println("waiting for next connection...");
-                    updateServerGUI();
-                    sock = serverSock.accept();
-                    if(!running) {
-                        updateServerGUI();
-                        sock.close();
-                        break;
-                    }
-
-                    System.out.println("incoming connecting...");
-                    //give them a client object, run it in a thread
-                    ClientNetworkController conn = new ClientNetworkController(sock, server);
-                    Thread thread = new Thread(conn);
-                    thread.start();
-                    System.out.println("thread started");
-                }
-            } catch(IOException ex) {
-                if(!nogui) {
-                    view.getStatus().setText("Port already taken");
-                    view.getConnectButton().setText("Start Server");
-                }
-                ex.printStackTrace();
-                System.out.println("requested port already taken. quitting...");
-            }
-            try {
-                for(int i=0;i<clients.size();i++)
-                    if(clients.get(i) != null)
-                        clients.get(i).disconnect("Server stopping");
-                int left = 0;
-                do {
-                    left = 0;
-                    for(int i=0;i<clients.size();i++) {
-                        if(clients.get(i) != null)
-                            left++;
-                    }
-                    Thread.sleep(50);
-                } while(left > 0);
-                serverSock.close();
-            } catch(Exception ex) {
-                ex.printStackTrace();
-            }
-            connected = false;
-        }
-    }
-
-	public LobbyController getLobby() {
-		return lobby;
-	}
-
-	public void setLobby(LobbyController lobby) {
-		this.lobby = lobby;
-	}
-
-	public boolean isRunning() {
-		return running;
-	}
-
-	public void setRunning(boolean running) {
-		this.running = running;
-	}
-
-	public ArrayList<String> getBannedList() {
-		return bannedList;
-	}
-
-	public void setBannedList(ArrayList<String> bannedList) {
-		this.bannedList = bannedList;
-	}
-
-	public boolean isConnected() {
-		return connected;
-	}
-
-	public void setConnected(boolean connected) {
-		this.connected = connected;
-	}
-
-	public MainThread getMainThread() {
-		return mainThread;
-	}
-
-	public void setMainThread(MainThread mainThread) {
-		this.mainThread = mainThread;
-	}
-
-	public String getRunningOn() {
-		return runningOn;
-	}
-
-	public void setRunningOn(String runningOn) {
-		this.runningOn = runningOn;
-	}
-
-	public int getPortNum() {
-		return portNum;
-	}
-
-	public void setPortNum(int portNum) {
-		this.portNum = portNum;
-	}
-
-	public boolean isNogui() {
-		return nogui;
-	}
-
-	public void setNogui(boolean nogui) {
-		this.nogui = nogui;
-	}
-
-	public ServerViewPanel getView() {
-		return view;
-	}
-
-	public void setView(ServerViewPanel view) {
-		this.view = view;
-	}
-
-	public ActionListener getConnectActionListener() {
-		return connectActionListener;
-	}
-
-	public void setConnectActionListener(ActionListener connectActionListener) {
-		this.connectActionListener = connectActionListener;
-	}
-
-	public static String getIpAddr() {
-		return IP_ADDR;
-	}
-
-	public static int getPort() {
-		return PORT;
-	}
 }
 
 

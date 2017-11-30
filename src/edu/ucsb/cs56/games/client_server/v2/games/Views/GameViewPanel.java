@@ -1,4 +1,4 @@
-package edu.ucsb.cs56.games.client_server.v2.client.Views;
+package edu.ucsb.cs56.games.client_server.v2.games.Views;
 
 import javax.swing.*;
 import java.awt.*;
@@ -10,9 +10,9 @@ import java.awt.event.MouseListener;
  * basic functions every panel should have. Might consider turning this into an interface, but before the offlinepanel existed,
  * gamepanel was used when a client was disconnected
  *
- * @author Joseph Colicchio
- * @author Adam Ehrlich
- * @version for CS56, Spring 2013
+ * @author David Roster
+ * @author Harrison Wang
+ * @version for CS56, Spring 2017
  */
 
 public class GameViewPanel extends JPanel implements MouseListener{
@@ -26,23 +26,33 @@ public class GameViewPanel extends JPanel implements MouseListener{
     public void update() {
 
     }
-
+	/**
+	 *mouse clicked during game
+	 */
     @Override
     public void mouseClicked(MouseEvent mouseEvent){
     }
-
+	/**
+	 *Returns mouse being pressed during game
+	 */
     @Override
     public void mousePressed(MouseEvent mouseEvent){
     }
-
+	/**
+	 *mouse is released during game
+	 */
     @Override
     public void mouseReleased(MouseEvent mouseEvent){
     }
-
+	/**
+	 *Mouse eneters game view
+	 */
     @Override
     public void mouseEntered(MouseEvent mouseEvent){
     }
-
+	/**
+	 *Mouse exits the game view
+	 */
     @Override
     public void mouseExited(MouseEvent mouseEvent){
     }

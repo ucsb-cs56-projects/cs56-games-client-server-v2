@@ -1,4 +1,4 @@
-package edu.ucsb.cs56.games.client_server.v2.Controllers;
+package edu.ucsb.cs56.games.client_server.v2.client.Controllers;
 
 import java.awt.Component;
 import java.awt.Font;
@@ -22,15 +22,16 @@ import javax.swing.DefaultListModel;
 import javax.swing.JList;
 import javax.swing.SwingUtilities;
 
-import edu.ucsb.cs56.games.client_server.v2.Models.ClientModel;
-import edu.ucsb.cs56.games.client_server.v2.client.Controllers.TicTacToeController;
-import edu.ucsb.cs56.games.client_server.v2.client.Controllers.TwoPlayerGameController;
+import edu.ucsb.cs56.games.client_server.v2.client.Models.ClientModel;
+import edu.ucsb.cs56.games.client_server.v2.games.ClientControllers.TicTacToeController;
+import edu.ucsb.cs56.games.client_server.v2.games.ClientControllers.TwoPlayerGameController;
 import edu.ucsb.cs56.games.client_server.v2.client.Models.MessageModel;
 import edu.ucsb.cs56.games.client_server.v2.client.Models.UsernameModel;
 import edu.ucsb.cs56.games.client_server.v2.client.Views.ClientViewPanel;
 import edu.ucsb.cs56.games.client_server.v2.client.Views.OfflineViewPanel;
 import edu.ucsb.cs56.games.client_server.v2.client.Views.OnlineViewPanel;
 import edu.ucsb.cs56.games.client_server.v2.server.Controllers.ServiceController;
+import edu.ucsb.cs56.games.client_server.v2.games.ClientControllers.GomokuController;
 
 /**
  * JavaClient is the main runnable client-side application, it allows users to connect to a server on a specific port
@@ -38,35 +39,36 @@ import edu.ucsb.cs56.games.client_server.v2.server.Controllers.ServiceController
  * it is composed of a user list, a message box, input box and send button for chatting, and a panel area to display
  * the lobby or current game
  *
- * @author Joseph Colicchio
- * @author Adam Ehrlich
- * @version for CS56, Spring 2013
+ * @author Hong Wang
+ * @author David Roster
+ * @version for CS56, Fall 2017
  */
 
 //start a java message client that tries to connect to a server at localhost:X
-public class JavaClient {
-    private ClientViewPanel view = null;
+public class JavaClient{   
 
-    private Socket sock;
-    private InputStreamReader stream;
-    private BufferedReader reader;
-    private PrintWriter writer;
+    protected ClientViewPanel view = null;
 
-    private ArrayList<ClientModel> clients;
-    private ArrayList<Integer> services;
-    
-    private ArrayList<MessageModel> messages;
-    
-    private int id;
-    private String name;
-    private int location;
-    
-    private InputReader thread;
-    private RefreshThread refreshThread;
-    private boolean connected;
-    
-    private TwoPlayerGameController gameController = null;
+    protected Socket sock;
+    protected InputStreamReader stream;
+    protected BufferedReader reader;
+    protected PrintWriter writer;
 
+    protected ArrayList<ClientModel> clients;
+    protected ArrayList<Integer> services;
+    
+    protected ArrayList<MessageModel> messages;
+    
+    protected int id;
+    protected String name;
+    protected int location;
+    
+    protected InputReader thread;
+    protected RefreshThread refreshThread;
+    protected boolean connected;
+    
+    protected TwoPlayerGameController gameController = null; 
+    
     public static void main(String [] args) {
         JavaClient javaClient = new JavaClient();
     }
@@ -92,7 +94,8 @@ public class JavaClient {
         view.getSouthPanel().getInputBox().addActionListener(listener);
         view.getSouthPanel().getSendButton().addActionListener(listener);
         
-        MouseListener mouseListener = new MouseAdapter() {
+	//double click to follow
+	MouseListener mouseListener = new MouseAdapter() {
             public void mouseClicked(MouseEvent e) {
                 if (e.getClickCount() == 2) {
                     int index = view.getUserList().locationToIndex(e.getPoint());
@@ -147,7 +150,9 @@ public class JavaClient {
 
         location = -1;
     }
-
+/**
+ *Creates three new ArrayLists to SetClients, services, and messages.
+ */
 
     public void init() {
         setClients(new ArrayList<ClientModel>());
@@ -250,133 +255,12 @@ public class JavaClient {
      * @param string the data from the server to handle
      */
     public void handleMessage(String string) {
-        if(string.indexOf("CON;") == 0) {
-            int pid = Integer.parseInt(string.substring(4));
-            System.out.println("Client "+pid+" has connected");
-            while(getClients().size() <= pid)
-                getClients().add(null);
-            if(getClients().get(pid) == null)
-                getClients().set(pid, new ClientModel(pid));
-            else
-                sendMessage("INFO;");
-            messages.add(new MessageModel(getClients().get(pid).getName()+" connected", "Server",true,false));
-            updateClients();
-            updateMessages();
-        } else if(string.indexOf("DCON[") == 0) {
-            String[] data = string.substring(5).split("]");
-            int pid = Integer.parseInt(data[0]);
-            System.out.println("Client " + pid + " has disconnected: " + data[1]);
-            if(getClients().size() > pid && getClients().get(pid) != null) {
-                messages.add(new MessageModel(getClients().get(pid).getName() + " disconnected: "+data[1], "Server", true, false));
-                getClients().set(pid, null);
-            }
-            updateClients();
-            updateMessages();
-            if(pid == getId())
-                thread.running = false;
-        } else if(string.indexOf("MSG[") == 0) {
-            String[] data = string.substring(4).split("]");
-            int pid = Integer.parseInt(data[0]);
-            if(getClients().size() <= pid || getClients().get(pid) == null)
-                return;
-            String msg = string.substring(4+data[0].length()+1);
-            System.out.println("Client "+pid+" said "+msg);
-            if(getClients().size() > pid) {
-                messages.add(new MessageModel(msg,getClients().get(pid).getName(),false,false));
-                updateMessages();
-            }
-        } else if(string.indexOf("PMSG[") == 0) {
-            String[] data = string.substring(5).split("]");
-            int pid = Integer.parseInt(data[0]);
-            String msg = string.substring(5+data[0].length()+1);
-            System.out.println("Client "+pid+" privately said "+msg);
-            if(getClients().size() > pid) {
-                messages.add(new MessageModel(msg,getClients().get(pid).getName(), true, false));
-                updateMessages();
-            }
-        } else if(string.indexOf("RMSG[") == 0) {
-            String[] data = string.substring(5).split("]");
-            int pid = Integer.parseInt(data[0]);
-            String msg = string.substring(5+data[0].length()+1);
-            if(getClients().size() > pid) {
-                messages.add(new MessageModel(msg,getClients().get(pid).getName(),true,true));
-                updateMessages();
-            }
-        } else if(string.indexOf("SMSG;") == 0) {
-            String msg = string.substring(5);
-            if(msg != null && msg.length() > 0) {
-                messages.add(new MessageModel(msg,"Server",true,false));
-                updateMessages();
-            }
-        } else if(string.indexOf("ID;") == 0) {
-            setId(Integer.parseInt(string.substring(3)));
-            if(name == null)
-                name = "User"+getId();
-
-            sendMessage("CON;");
-            sendMessage("NAME;"+name);
-            sendMessage("INFO;");
-            System.out.println(location);
-        } else if(string.indexOf("ALL;") == 0) {
-            String[] connected = string.substring(4).split(";");
-            for(int i=0;i<connected.length;i++) {
-                String[] info = connected[i].split(",");
-                if(getClients().size() <= i)
-                    getClients().add(null);
-                if(connected[i].equals(","))
-                    continue;
-                if(info[0].equals("")) {
-                    if(getClients().get(i) != null)
-                        getClients().set(i, null);
-                } else {
-                    getClients().set(i, new ClientModel(i, info[0], Integer.parseInt(info[1])));
-                    if(getId() == i)
-                        changeLocation(Integer.parseInt(info[1]));
-                }
-            }
-            //the problem is here, we need to have something else removing the clients from the list and re-adding them
-            //otherwise when the thing redraws, it'll freak out
-            updateClients();
-        } else if(string.indexOf("SERV;") == 0) {
-            String[] serv = string.substring(5).split(",");
-            for(int i=0;i<serv.length;i++) {
-                if(services.size() <= i)
-                    services.add(null);
-                services.set(i, Integer.parseInt(serv[i]));
-            }
-            updateClients();
-            changeLocation(location);
-        } else if(string.indexOf("NEW;") == 0) {
-            services.add(Integer.parseInt(string.substring(4)));
-        } else if(string.indexOf("NAME[") == 0) {
-            String[] data = string.substring(5).split("]");
-            int pid = Integer.parseInt(data[0]);
-            String pname = data[1];
-            if(getClients().size() <= pid)
-                return;
-            if(getClients().get(pid) == null)
-                getClients().set(pid, new ClientModel(getId(), pname, 0));
-            //messages.add(new edu.ucsb.cs56.W12.jcolicchio.issue535.Message(clients.get(pid).name+" changed his name to "+pname, "Server",true,false,clients.get(0).getColor()));
-            getClients().get(pid).setName(pname);
-            if(pid == getId())
-                name = pname;
-            updateClients();
-            updateMessages();
-        } else if(string.indexOf("MOVED[") == 0) {
-            String[] data = string.substring(6).split("]");
-            int pid = Integer.parseInt(data[0]);
-            getClients().get(pid).setLocation(Integer.parseInt(data[1]));
-            if(pid == getId()) {
-                changeLocation(getClients().get(getId()).getLocation());
-            }
-            updateClients();
-            updateMessages();
-        }
-        // XXX fix?
+	MessageHandler.handleMessage(string, this);       
         if (gameController != null)
         	gameController.handleMessage(string);
     }
 
+    
     /** changes the location of the client, in order to generate a service panel associated with
      * that location to start interacting with the specified service
      * @param L the service id number
@@ -407,8 +291,13 @@ public class JavaClient {
             	gameController = new TicTacToeController(this);
                 view.setCanvasRef(((TicTacToeController)gameController).getView());
             }
-            /*else if(serviceType == 2)
-                canvasRef = new GomokuViewPanel();
+            else if(serviceType == 2){
+		gameController = new GomokuController(this);
+                view.setCanvasRef(((GomokuController)gameController).getView());
+		// CanvasRef = new GomokuViewPanel();
+	    //hopefully this works
+	    }
+	    /*
             else if(serviceType == 3)
                 canvasRef = new ChessViewPanel();*/
         }
@@ -436,27 +325,32 @@ public class JavaClient {
 		return clients;
 	}
 
-	public void setClients(ArrayList<ClientModel> clients) {
+    public void setClients(ArrayList<ClientModel> clients) {
 		this.clients = clients;
 	}
 
-	public int getId() {
+    public int getId() {
 		return id;
 	}
 
-	public void setId(int id) {
+    public void setId(int id) {
 		this.id = id;
 	}
 
-	public boolean isConnected() {
+    public boolean isConnected() {
 		return connected;
 	}
 
-	public void setConnected(boolean connected) {
+    public void setConnected(boolean connected) {
 		this.connected = connected;
 	}
 
-	/** listens for the send button's action and sends a message, if connected
+    public ClientViewPanel getView() {
+		return this.view;
+	}
+
+    //Classes within the class    
+    /** listens for the send button's action and sends a message, if connected
      *
      */
     class SendListener implements ActionListener {
@@ -512,62 +406,6 @@ public class JavaClient {
             //System.exit(0);
         }
     }
-
-	public ClientViewPanel getView() {
-		return this.view;
-	}
-
 }
 
-/** renders usernames with bold or italics
- * useful when a user is in another location
- * or to highlight the client's username
- */
-class MyCellRenderer extends DefaultListCellRenderer {
 
-    public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
-        Component c = super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
-
-        UsernameModel user = (UsernameModel)value;
-        if (user.getStyle() == 2) {// <= put your logic here
-            c.setFont(c.getFont().deriveFont(Font.BOLD));
-        } else if(user.getStyle() == 1) {
-            c.setFont(c.getFont().deriveFont(Font.ITALIC));
-        } else {
-            c.setFont(c.getFont().deriveFont(Font.PLAIN));
-        }
-        return c;
-    }
-}
-
-/**
- * refresh thread constantly repaints the application
- */
-class RefreshThread extends Thread implements Runnable {
-    public boolean running;
-    JavaClient javaClient;
-    public RefreshThread(JavaClient client) {
-        running = false;
-        javaClient = client;
-    }
-
-    public void run() {
-        running = true;
-        while(running) {
-            //javaClient.update();
-            SwingUtilities.invokeLater(
-                    new Runnable() {
-                        public void run() {
-                            javaClient.getView().getCanvas().repaint();
-                        }
-                    }
-            );
-            try {
-                Thread.sleep(50);
-            } catch(InterruptedException e) {
-                e.printStackTrace();
-                System.out.println("refresh thread broke");
-            }
-        }
-    }
-}
