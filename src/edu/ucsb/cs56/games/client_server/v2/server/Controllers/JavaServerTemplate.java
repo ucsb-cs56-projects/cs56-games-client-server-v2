@@ -28,8 +28,8 @@ import edu.ucsb.cs56.games.client_server.v2.server.Views.ServerViewPanel;
 //start a java message server that listens for connections to port X and then connects the client 
 public abstract class JavaServerTemplate{
     //this belongs to the server itself, independent of the chat standards
-    public static ArrayList<ClientNetworkController> clients;
-    public static ArrayList<ServiceController> services;
+    protected static ArrayList<ClientNetworkController> clients;
+    protected static ArrayList<ServiceController> services;
     protected LobbyController lobby;
 
     protected  boolean running;
